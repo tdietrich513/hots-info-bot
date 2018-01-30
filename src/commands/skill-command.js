@@ -137,7 +137,7 @@ class SkillCommand extends Command {
         let hero = this.heroes.find(h => h.nameLower == search.toLowerCase());        
         let embed = new RichEmbed().setColor(0x00AE86);   
         embed.setTitle(`${hero.name} Skills Overview:`);
-        embed.setDescription(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name.replace(' ', '%20')})`);
+        embed.setDescription(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name.replace(/\s/g, '%20')})`);
         hero.skills.forEach(skill => {
             let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
             embed.addField(`${skill.name}`, skillDescription);
