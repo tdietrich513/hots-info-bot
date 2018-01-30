@@ -201,15 +201,16 @@ class SkillCommand extends Command {
 
     exec(message, match, groups) {
         let skillMatches = message.cleanContent.match(/\[\[[^\]]+?\]\]/ig)
-        skillMatches = _.uniqBy(skillMatches, m => m);
+        skillMatches = _.chain(skillMatches)
+                        .map(m => m.replace(/(\[|\])/ig,'').replace(/\s/ig, ' ').trim())
+                        .uniqBy(m => m)
+                        .value();
         if (skillMatches.length > 4) {
             message.reply(`I can only search for up to 4 things at once, don't be cheeky.`);
             skillMatches = skillMatches.slice(0, 4);
         }
 
-        skillMatches.forEach(match => {
-            let search = match.replace(/(\[|\])/ig,'').replace(/\s/ig, ' ').trim();            
-
+        skillMatches.forEach(search => {                        
             if (this.isJimmy(search)) {
                 return message.reply("This is Jimmy, now shut up.");
             }
