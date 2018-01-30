@@ -29,8 +29,8 @@ class SkillCommand extends Command {
                         nameLower: skill.name.toLowerCase(),
                         name: skill.name,
                         hero: hero.name,
-                        hotkey: skill.hotkey,
-                        cooldown: skill.cooldown,
+                        hotkey: skill.hotkey || skill.trait ? 'Trait' : 'Passive',
+                        cooldown: skill.cooldown || 'None',
                         manaCost: skill.manaCost || 'None',
                         description: skill.description
                     });                             
