@@ -23,10 +23,11 @@ class SkillCommand extends Command {
                 nameLower: hero.name.toLowerCase(),
                 role: hero.role,
                 type: hero.type,
-                talents: {}
+                talents: {},
+                skills: []
             }
 
-            heroNames.push(heroSummary.nameLower);
+            this.heroNames.push(heroSummary.nameLower);
 
             hero.skills.forEach(skillSet => {
                 skillSet.forEach(skill => {    
@@ -34,7 +35,7 @@ class SkillCommand extends Command {
                     if (!hotkey || hotkey == null || hotkey == undefined) {
                         hotkey = skill.trait ? 'Trait' : 'Passive';
                     }
-                    this.skills.push({
+                    let skillSummary = {
                         nameLower: skill.name.toLowerCase(),
                         name: skill.name,
                         hero: hero.name,
@@ -42,7 +43,9 @@ class SkillCommand extends Command {
                         cooldown: skill.cooldown || 'None',
                         manaCost: skill.manaCost || 'None',
                         description: skill.description
-                    });                             
+                    }
+                    heroSummary.skills.push(skillSummary);
+                    this.skills.push(skillSummary);                             
                 });
             });
 
@@ -131,14 +134,14 @@ class SkillCommand extends Command {
     }
 
     outputHeroSkills(search, message) {
-        let hero = this.heroes.find(h => h.nameLower == search.toLowerCase());
+        let hero = this.heroes.find(h => h.nameLower == search.toLowerCase());        
         let embed = new RichEmbed().setColor(0x00AE86);   
         embed.setTitle(`${hero.name} Skills Overview:`);
-        embed.setFooter(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name}`);
+        embed.setDescription(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name.replace(' ', '%20')})`);
         hero.skills.forEach(skill => {
             let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
             embed.addField(`${skill.name}`, skillDescription);
-        })
+        });        
 
         return message.channel.send({embed});
     }
@@ -235,7 +238,7 @@ class SkillCommand extends Command {
                 return message.reply("This is Jimmy, now shut up.");
             }
 
-            if (this.isHeroTalentTierSearch(search)) {
+            if (this.isHeroSearch(search)) {
                 return this.outputHeroSkills(search, message);
             }
 
