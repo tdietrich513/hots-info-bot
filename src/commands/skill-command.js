@@ -15,6 +15,7 @@ class SkillCommand extends Command {
         this.skills = [];
         this.talents = [];
         this.heroes = [];
+        this.heroNames = [];
 
         getSkillData(hero => {
             let heroSummary = {
@@ -24,6 +25,8 @@ class SkillCommand extends Command {
                 type: hero.type,
                 talents: {}
             }
+
+            heroNames.push(heroSummary.nameLower);
 
             hero.skills.forEach(skillSet => {
                 skillSet.forEach(skill => {    
@@ -123,6 +126,23 @@ class SkillCommand extends Command {
         return pattern.test(searchText);
     }    
 
+    isHeroSearch(searchText) {
+        return this.heroNames.some(hn => hn == searchText.toLowerCase());
+    }
+
+    outputHeroSkills(search, message) {
+        let hero = this.heroes.find(h => h.nameLower == search.toLowerCase());
+        let embed = new RichEmbed().setColor(0x00AE86);   
+        embed.setTitle(`${hero.name} Skills Overview:`);
+        embed.setFooter(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name}`);
+        hero.skills.forEach(skill => {
+            let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
+            embed.addField(`${skill.name}`, skillDescription);
+        })
+
+        return message.channel.send({embed});
+    }
+
     outputHeroTalentTier(search, message) {
         const heroPattern = /[^\d\/]+/i;
         const tierPattern = /[\d]{1,2}/i;
@@ -148,7 +168,7 @@ class SkillCommand extends Command {
             embed.addField(`${talent.name}`, talentDescription);
         });
 
-        message.channel.send({embed});
+        return message.channel.send({embed});
     }
 
     outputSkillsOrTalents(search, message) {
@@ -213,6 +233,10 @@ class SkillCommand extends Command {
         skillMatches.forEach(search => {                        
             if (this.isJimmy(search)) {
                 return message.reply("This is Jimmy, now shut up.");
+            }
+
+            if (this.isHeroTalentTierSearch(search)) {
+                return this.outputHeroSkills(search, message);
             }
 
             if (this.isHeroTalentTierSearch(search)){
