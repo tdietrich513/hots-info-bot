@@ -13,6 +13,11 @@ Search for a talent or skill by surrounding your search with double square brack
 
 For example: `[[haunting wave]]`.
 
+### Hero Ovewrview
+Display a Hero's skills and get a link to popular builds by searching for the hero's exact name.
+
+For Example: `[[Sgt. Hammer]]`
+
 ### Hero Talent Tier Searches 
 Display a Hero's talent tier by searching for the hero's name (or part of it) followed by a slash and the tier level.
 
