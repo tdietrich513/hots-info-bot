@@ -208,7 +208,7 @@ class SkillCommand extends Command {
         }
 
         skillMatches.forEach(match => {
-            let search = match.replace(/(\[|\])/ig,'');
+            let search = match.replace(/(\[|\])/ig,'').replace(/\s/ig, ' ').trim();            
 
             if (this.isJimmy(search)) {
                 return message.reply("This is Jimmy, now shut up.");
