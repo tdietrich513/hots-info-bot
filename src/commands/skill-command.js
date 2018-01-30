@@ -109,7 +109,7 @@ class SkillCommand extends Command {
     }
 
     isHeroTalentTierSearch(searchText) {
-        const pattern = /[\D]+[\d]{1,2}/i;
+        const pattern = /[\D]+\/[\d]{1,2}/i;
         return pattern.test(searchText);
     }
 
@@ -124,7 +124,7 @@ class SkillCommand extends Command {
     }    
 
     outputHeroTalentTier(search, message) {
-        const heroPattern = /[\D]+/i;
+        const heroPattern = /[^\d\/]+/i;
         const tierPattern = /[\d]{1,2}/i;
 
         let heroSearch = search.match(heroPattern)[0].trim();

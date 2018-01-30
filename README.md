@@ -14,9 +14,9 @@ Search for a talent or skill by surrounding your search with double square brack
 For example: `[[haunting wave]]`.
 
 ### Hero Talent Tier Searches 
-Display a Hero's talent tier by searching for the hero's name (or part of it) followed by the tier level.
+Display a Hero's talent tier by searching for the hero's name (or part of it) followed by a slash and the tier level.
 
-For example `[[Hammer 10]]`.
+For example `[[Hammer/10]]`.
 
 ### Notes:
 The bot will only search for the first four items in any given message. If there are too many results for any given search, the bot will attempt to truncate the results to avoid spamming the channel.
