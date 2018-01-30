@@ -26,12 +26,16 @@ class SkillCommand extends Command {
             }
 
             hero.skills.forEach(skillSet => {
-                skillSet.forEach(skill => {                    
+                skillSet.forEach(skill => {    
+                    let hotkey = skill.hotkey;
+                    if (!hotkey || hotkey == null || hotkey == undefined) {
+                        hotkey = skill.trait ? 'Trait' : 'Passive';
+                    }
                     this.skills.push({
                         nameLower: skill.name.toLowerCase(),
                         name: skill.name,
                         hero: hero.name,
-                        hotkey: skill.hotkey || skill.trait ? 'Trait' : 'Passive',
+                        hotkey: hotkey,
                         cooldown: skill.cooldown || 'None',
                         manaCost: skill.manaCost || 'None',
                         description: skill.description
@@ -117,7 +121,7 @@ class SkillCommand extends Command {
     isJimmy(searchText){
         const pattern = /^jimmy$/i;
         return pattern.test(searchText);
-    }
+    }    
 
     outputHeroTalentTier(search, message) {
         const heroPattern = /[\D]+/i;
@@ -137,7 +141,7 @@ class SkillCommand extends Command {
 
         let embed = new RichEmbed() 
             .setColor(0x00AE86)
-            .setTitle(`${tier[0].hero}'s Level ${tier[0].tier} Talents:`);
+            .setTitle(`${tier[0].hero} Level ${tier[0].tier} Talents:`);
         
         tier.forEach(talent => {
             let talentDescription = `\n_${talent.description}_\n\n`
@@ -174,17 +178,22 @@ class SkillCommand extends Command {
             return message.channel.send(`There are ${totalCount} matches for '${search}':\n${shortVersions.join('\n')}\nBe more specific for more detail.`);
         } 
         
-        let embed = new RichEmbed()                    
-            .setColor(0x00AE86);        
+        let embed = new RichEmbed().setColor(0x00AE86);        
         
+        let mentionedSkills = [];
+
         talentsAndSkills.skills.forEach(skill => {
+            mentionedSkills.push(skill.name);
             let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
             embed.addField(`${skill.name} (${skill.hero})`, skillDescription);
         });
 
         talentsAndSkills.talents.forEach(talent => {
-            let talentDescription = `\n_${talent.description}_\n\n`
-            embed.addField(`${talent.name} (${talent.hero} level ${talent.tier})`, talentDescription);
+            if (!mentionedSkills.includes(talent.name)) {
+                let talentDescription = `\n_${talent.description}_\n\n`
+                embed.addField(`${talent.name} (${talent.hero} level ${talent.tier})`, talentDescription);
+                mentionedSkills.push(talent.name);
+            }            
         });
 
         return message.channel.send({embed});        
