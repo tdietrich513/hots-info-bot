@@ -67,6 +67,11 @@ class SkillCommand extends Command {
 
         skillMatches.forEach(match => {
             let name = match.replace(/(\[|\])/ig,'');
+
+            if (name.toLowerCase() == "jimmy") {
+                return message.reply("This is Jimmy, now shut up.");
+            }
+
             let talentsAndSkills = this.findSkillOrTalent(name);
             let totalCount = (talentsAndSkills.skills.length + talentsAndSkills.talents.length);
             if (totalCount == 0) {                
