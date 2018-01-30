@@ -2,6 +2,8 @@ const { RichEmbed } = require('discord.js');
 const { Command } = require('discord-akairo');
 const { getSkillData } = require('../load-data');
 
+const _ = require('lodash');
+
 class SkillCommand extends Command {    
     
 
@@ -56,12 +58,17 @@ class SkillCommand extends Command {
             }
 
             this.heroes.push(heroSummary);
+            this.heroes.sort((a, b) => {
+                if (a.nameLower < b.nameLower) return -1;
+                if (a.nameLower > b.nameLower) return 1;
+                return 0;
+            });
         });
     }
    
     findSkillOrTalent(name) {
         let matches = { skills: [], talents: [] };
-        let nameLower = name.trim().toLowerCase();
+        let nameLower = name.trim().toLowerCase();        
 
         this.skills.forEach(skill => {
             if (skill.nameLower.includes(nameLower)) {
@@ -79,9 +86,19 @@ class SkillCommand extends Command {
     }
 
     findHeroTalentTier(heroName, tier) {
-        let matchingHero = this.heroes.find(h => h.nameLower
-            .split(' ')
-            .some(word => word.startsWith(heroName.toLowerCase()))
+        let heroNameLower = heroName.toLowerCase();
+        let matchingHero = this.heroes.find(h => 
+            {
+                let isExactMatch = h.nameLower == heroNameLower;                
+
+                let isWordMatch = h.nameLower
+                    .split(' ')
+                    .some(word => word.startsWith(heroNameLower));
+
+                let isStartsWithMatch = h.nameLower.startsWith(heroNameLower);
+
+                return (isExactMatch || isWordMatch || isStartsWithMatch);
+            }
         );
         if (!matchingHero) return [];
         return matchingHero.talents[tier] || [];
@@ -109,6 +126,10 @@ class SkillCommand extends Command {
         let heroSearch = search.match(heroPattern)[0].trim();
         let tierSearch = search.match(tierPattern)[0];
 
+        if (heroSearch == '') {
+            return message.reply(`Please provide a hero name to search for talents by tier.`);
+        }
+
         let tier = this.findHeroTalentTier(heroSearch, tierSearch);
         if (tier.length === 0) {
             return message.reply(`Couldn't find a hero talent tier for '${search}'`);
@@ -127,13 +148,21 @@ class SkillCommand extends Command {
     }
 
     outputSkillsOrTalents(search, message) {
+        if (search.trim() == '') {
+            return message.reply(`You're going to have to give me _something_ to look for.`);
+        }
+
         let talentsAndSkills = this.findSkillOrTalent(search);
         let totalCount = (talentsAndSkills.skills.length + talentsAndSkills.talents.length);
         if (totalCount == 0) {                
-            message.reply(`Didn't find any skills or talents matching '${search}', sorry.`);                
-        } else if (totalCount > 10) {                 
-            message.reply(`You're going to have to be way more specific, there are ${totalCount} matches for '${search}'.`);
-        } else if (totalCount > 4 && totalCount <= 10) {                
+            return message.reply(`Didn't find any skills or talents matching '${search}', sorry.`);                
+        } 
+        
+        if (totalCount > 10) {                 
+            return message.reply(`You're going to have to be way more specific, there are ${totalCount} matches for '${search}'.`);
+        }
+        
+        if (totalCount > 4 && totalCount <= 10) {                
             let shortVersions = [];                
             talentsAndSkills.skills.forEach(skill => {
                 shortVersions.push(`**${skill.name}** _${skill.hero} (${skill.hotkey})_`);                    
@@ -142,27 +171,32 @@ class SkillCommand extends Command {
             talentsAndSkills.talents.forEach(talent => {
                 shortVersions.push(`**${talent.name}** _${talent.hero} (Level ${talent.tier})_`);                    
             });
-            message.channel.send(`There are ${totalCount} matches for '${search}':\n${shortVersions.join('\n')}\nBe more specific for more detail.`);
-        } else {
-            let embed = new RichEmbed()                    
-                .setColor(0x00AE86);        
-            
-            talentsAndSkills.skills.forEach(skill => {
-                let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
-                embed.addField(`${skill.name} (${skill.hero})`, skillDescription);
-            });
+            return message.channel.send(`There are ${totalCount} matches for '${search}':\n${shortVersions.join('\n')}\nBe more specific for more detail.`);
+        } 
+        
+        let embed = new RichEmbed()                    
+            .setColor(0x00AE86);        
+        
+        talentsAndSkills.skills.forEach(skill => {
+            let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
+            embed.addField(`${skill.name} (${skill.hero})`, skillDescription);
+        });
 
-            talentsAndSkills.talents.forEach(talent => {
-                let talentDescription = `\n_${talent.description}_\n\n`
-                embed.addField(`${talent.name} (${talent.hero} level ${talent.tier})`, talentDescription);
-            });
+        talentsAndSkills.talents.forEach(talent => {
+            let talentDescription = `\n_${talent.description}_\n\n`
+            embed.addField(`${talent.name} (${talent.hero} level ${talent.tier})`, talentDescription);
+        });
 
-            message.channel.send({embed});
-        }
+        return message.channel.send({embed});        
     }
 
     exec(message, match, groups) {
         let skillMatches = message.cleanContent.match(/\[\[[^\]]+?\]\]/ig)
+        skillMatches = _.uniqBy(skillMatches, m => m);
+        if (skillMatches.length > 4) {
+            message.reply(`I can only search for up to 4 things at once, don't be cheeky.`);
+            skillMatches = skillMatches.slice(0, 4);
+        }
 
         skillMatches.forEach(match => {
             let search = match.replace(/(\[|\])/ig,'');
