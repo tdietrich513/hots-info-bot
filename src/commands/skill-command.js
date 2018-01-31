@@ -152,6 +152,9 @@ class SkillCommand extends Command {
                 textResponse = textResponse + `**${skill.name}**\n`;
                 textResponse = textResponse + `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`                
             });
+
+            return message.channel.send(textResponse)
+                .catch(console.error);
         }        
     }
 
@@ -183,7 +186,7 @@ class SkillCommand extends Command {
             return message.channel.send({embed})
                     .catch(console.error);
         } else {
-            let textResponse = `${tier[0].hero} Level ${tier[0].tier} Talents:\n`;
+            let textResponse = `**${tier[0].hero} Level ${tier[0].tier} Talents**:\n`;
             tier.forEach(talent => {
                 textResponse = textResponse + `**${talent.name}**\n`;
                 textResponse = textResponse + `_${talent.description}_\n\n`                
@@ -252,7 +255,7 @@ class SkillCommand extends Command {
     
             talentsAndSkills.talents.forEach(talent => {
                 if (!mentionedSkills.includes(talent.name)) {
-                    textResponse = textResponse + `${talent.name} (${talent.hero} level ${talent.tier})\n`
+                    textResponse = textResponse + `**${talent.name}** (${talent.hero} level ${talent.tier})\n`
                     textResponse = textResponse + `_${talent.description}_\n\n`                    
                     mentionedSkills.push(talent.name);
                 }            
@@ -274,9 +277,13 @@ class SkillCommand extends Command {
             skillMatches = skillMatches.slice(0, 4);
         }
         
-        let me = message.client.user;        
-        let myPermissions = message.channel.permissionsFor(me);
-        let useEmbeds = myPermissions.has("EMBED_LINKS");
+        let useEmbeds = true;
+
+        if (message.channel.permissionsFor !== undefined) {
+            let me = message.client.user;
+            let myPermissions = message.channel.permissionsFor(me);
+            useEmbeds = myPermissions.has("EMBED_LINKS");
+        }
 
         skillMatches.forEach(search => {                        
             if (this.isJimmy(search)) {
