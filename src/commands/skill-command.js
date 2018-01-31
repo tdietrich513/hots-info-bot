@@ -133,21 +133,29 @@ class SkillCommand extends Command {
         return this.heroNames.some(hn => hn == searchText.toLowerCase());
     }
 
-    outputHeroSkills(search, message) {
-        let hero = this.heroes.find(h => h.nameLower == search.toLowerCase());        
-        let embed = new RichEmbed().setColor(0x00AE86);   
-        embed.setTitle(`${hero.name} Skills Overview:`);
-        embed.setDescription(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name.replace(/\s/g, '%20')})`);
-        hero.skills.forEach(skill => {
-            let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
-            embed.addField(`${skill.name}`, skillDescription);
-        });        
-
-        return message.channel.send({embed})
-            .catch(console.error);
+    outputHeroSkills(search, message, useEmbeds) {
+        let hero = this.heroes.find(h => h.nameLower == search.toLowerCase());
+        if (useEmbeds) {
+            let embed = new RichEmbed().setColor(0x00AE86);   
+            embed.setTitle(`${hero.name} Skills Overview:`);
+            embed.setDescription(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name.replace(/\s/g, '%20')})`);
+            hero.skills.forEach(skill => {
+                let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
+                embed.addField(`${skill.name}`, skillDescription);
+            });        
+    
+            return message.channel.send({embed})
+                .catch(console.error);
+        } else {
+            let textResponse = `**${hero.name} Skills Overview**:`
+            hero.skills.forEach(skill => {
+                textResponse = textResponse + `**${skill.name}**`;
+                textResponse = textResponse + `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`                
+            });
+        }        
     }
 
-    outputHeroTalentTier(search, message) {
+    outputHeroTalentTier(search, message, useEmbeds) {
         const heroPattern = /[^\d\/]+/i;
         const tierPattern = /[\d]{1,2}/i;
 
@@ -162,21 +170,31 @@ class SkillCommand extends Command {
         if (tier.length === 0) {
             return message.reply(`Couldn't find a hero talent tier for '${search}'`);
         }
-
-        let embed = new RichEmbed() 
+        if (useEmbeds) {
+            let embed = new RichEmbed() 
             .setColor(0x00AE86)
             .setTitle(`${tier[0].hero} Level ${tier[0].tier} Talents:`);
         
-        tier.forEach(talent => {
-            let talentDescription = `\n_${talent.description}_\n\n`
-            embed.addField(`${talent.name}`, talentDescription);
-        });
+            tier.forEach(talent => {
+                let talentDescription = `\n_${talent.description}_\n\n`
+                embed.addField(`${talent.name}`, talentDescription);
+            });
 
-        return message.channel.send({embed})
-                .catch(console.error);
+            return message.channel.send({embed})
+                    .catch(console.error);
+        } else {
+            let textResponse = `${tier[0].hero} Level ${tier[0].tier} Talents:`;
+            tier.forEach(talent => {
+                textResponse = textResponse + `**${talent.name}**\n`;
+                textResponse = textResponse + `_${talent.description}_\n\n`                
+            });
+
+            return message.channel.send(textResponse);
+        }
+        
     }
 
-    outputSkillsOrTalents(search, message) {
+    outputSkillsOrTalents(search, message, useEmbeds) {
         if (search.trim() == '') {
             return message.reply(`You're going to have to give me _something_ to look for.`);
         }
@@ -202,27 +220,47 @@ class SkillCommand extends Command {
             });
             return message.channel.send(`There are ${totalCount} matches for '${search}':\n${shortVersions.join('\n')}\nBe more specific for more detail.`);
         } 
-        
-        let embed = new RichEmbed().setColor(0x00AE86);        
-        
+
         let mentionedSkills = [];
+        
+        if (useEmbeds) {
+            let embed = new RichEmbed().setColor(0x00AE86);                            
+    
+            talentsAndSkills.skills.forEach(skill => {
+                mentionedSkills.push(skill.name);
+                let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
+                embed.addField(`${skill.name} (${skill.hero})`, skillDescription);
+            });
+    
+            talentsAndSkills.talents.forEach(talent => {
+                if (!mentionedSkills.includes(talent.name)) {
+                    let talentDescription = `\n_${talent.description}_\n\n`
+                    embed.addField(`${talent.name} (${talent.hero} level ${talent.tier})`, talentDescription);
+                    mentionedSkills.push(talent.name);
+                }            
+            });
+                    
+            return message.channel.send({embed})
+                   .catch(console.error);     
+        } else {
+            let textResponse = '';
+            talentsAndSkills.skills.forEach(skill => {
+                mentionedSkills.push(skill.name);
+                textResponse = textResponse + `**${skill.name}** (${skill.hero})\n`;
+                textResponse = textResponse + `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`                
+            });
+    
+            talentsAndSkills.talents.forEach(talent => {
+                if (!mentionedSkills.includes(talent.name)) {
+                    textResponse = textResponse + `${talent.name} (${talent.hero} level ${talent.tier})\n`
+                    textResponse = textResponse + `_${talent.description}_\n\n`                    
+                    mentionedSkills.push(talent.name);
+                }            
+            });
 
-        talentsAndSkills.skills.forEach(skill => {
-            mentionedSkills.push(skill.name);
-            let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`
-            embed.addField(`${skill.name} (${skill.hero})`, skillDescription);
-        });
-
-        talentsAndSkills.talents.forEach(talent => {
-            if (!mentionedSkills.includes(talent.name)) {
-                let talentDescription = `\n_${talent.description}_\n\n`
-                embed.addField(`${talent.name} (${talent.hero} level ${talent.tier})`, talentDescription);
-                mentionedSkills.push(talent.name);
-            }            
-        });
-
-        return message.channel.send({embed})
-               .catch(console.error);        
+            return message.channel.send(textResponse);
+        }
+           
     }
 
     exec(message, match, groups) {
@@ -235,6 +273,10 @@ class SkillCommand extends Command {
             message.reply(`I can only search for up to 4 things at once, don't be cheeky.`);
             skillMatches = skillMatches.slice(0, 4);
         }
+        
+        let me = message.client.user;        
+        let myPermissions = message.channel.permissionsFor(me);
+        let useEmbeds = myPermissions.has("EMBED_LINKS");
 
         skillMatches.forEach(search => {                        
             if (this.isJimmy(search)) {
@@ -242,15 +284,15 @@ class SkillCommand extends Command {
             }
 
             if (this.isHeroSearch(search)) {
-                return this.outputHeroSkills(search, message);
+                return this.outputHeroSkills(search, message, useEmbeds);
             }
 
             if (this.isHeroTalentTierSearch(search)){
-                return this.outputHeroTalentTier(search, message);
+                return this.outputHeroTalentTier(search, message, useEmbeds);
             }
 
             if (this.isSkillOrTalentSearch(search)){
-                return this.outputSkillsOrTalents(search, message);
+                return this.outputSkillsOrTalents(search, message, useEmbeds);
             }
 
             return message.reply(`I have no idea what to do with '${search}', are you sure you know how to use me?`);
