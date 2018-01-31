@@ -147,9 +147,9 @@ class SkillCommand extends Command {
             return message.channel.send({embed})
                 .catch(console.error);
         } else {
-            let textResponse = `**${hero.name} Skills Overview**:`
+            let textResponse = `**${hero.name} Skills Overview**:\n`
             hero.skills.forEach(skill => {
-                textResponse = textResponse + `**${skill.name}**`;
+                textResponse = textResponse + `**${skill.name}**\n`;
                 textResponse = textResponse + `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n_${skill.description}_\n\n`                
             });
         }        
@@ -183,7 +183,7 @@ class SkillCommand extends Command {
             return message.channel.send({embed})
                     .catch(console.error);
         } else {
-            let textResponse = `${tier[0].hero} Level ${tier[0].tier} Talents:`;
+            let textResponse = `${tier[0].hero} Level ${tier[0].tier} Talents:\n`;
             tier.forEach(talent => {
                 textResponse = textResponse + `**${talent.name}**\n`;
                 textResponse = textResponse + `_${talent.description}_\n\n`                
