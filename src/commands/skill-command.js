@@ -143,7 +143,8 @@ class SkillCommand extends Command {
             embed.addField(`${skill.name}`, skillDescription);
         });        
 
-        return message.channel.send({embed});
+        return message.channel.send({embed})
+            .catch(console.error);
     }
 
     outputHeroTalentTier(search, message) {
@@ -171,7 +172,8 @@ class SkillCommand extends Command {
             embed.addField(`${talent.name}`, talentDescription);
         });
 
-        return message.channel.send({embed});
+        return message.channel.send({embed})
+                .catch(console.error);
     }
 
     outputSkillsOrTalents(search, message) {
@@ -219,7 +221,8 @@ class SkillCommand extends Command {
             }            
         });
 
-        return message.channel.send({embed});        
+        return message.channel.send({embed})
+               .catch(console.error);        
     }
 
     exec(message, match, groups) {
