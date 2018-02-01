@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tdietrich513/hots-info-bot.svg?branch=master)](https://travis-ci.org/tdietrich513/hots-info-bot)
+
 # HOTS Info Bot 
 Discord chatbot for helpfully providing Heroes of the Storm skill and talent information in chat
 
