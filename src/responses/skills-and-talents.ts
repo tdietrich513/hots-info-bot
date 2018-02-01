@@ -2,69 +2,70 @@ import HeroData from "../hero-data";
 import { Message, RichEmbed } from "discord.js";
 import { SkillFormatter } from "../skill-formatter";
 import { TalentFormatter } from "../talent-formatter";
+import { ITalentData } from "../interfaces";
 import * as _ from "lodash";
 
 export function outputSkillsOrTalents(search: string, message: Message, useEmbeds: boolean) {
-  if (search.trim() == "") {
-      return message.reply(`You're going to have to give me _something_ to look for.`);
-  }
+    if (search.trim() == "") {
+        return message.reply(`You're going to have to give me _something_ to look for.`);
+    }
 
-  const talentsAndSkills = HeroData.findSkillOrTalent(search);
-  const totalCount = (talentsAndSkills.skills.length + talentsAndSkills.talents.length);
-  if (totalCount == 0) {
-      return message.reply(`Didn't find any skills or talents matching '${search}', sorry.`);
-  }
+    const talentsAndSkills = HeroData.findSkillOrTalent(search);
 
-  if (totalCount > 10) {
-      return message.reply(`You're going to have to be way more specific, there are ${totalCount} matches for '${search}'.`);
-  }
+    const undupedTalents: Map<string, ITalentData[]> = new Map<string, ITalentData[]>();
+    talentsAndSkills.talents.forEach(t => {
+        if (!talentsAndSkills.skills.some(s => s.name == t.name)) {
+            if (undupedTalents.has(t.name)) undupedTalents.get(t.name).push(t);
+            else (undupedTalents.set(t.name, [t]));
+        }
+    });
 
-  if (totalCount > 4 && totalCount <= 10) {
-      const shortVersions: string[] = [];
-      talentsAndSkills.skills.forEach(skill => {
-          shortVersions.push(SkillFormatter.shortText(skill, true));
-      });
+    const totalCount = (talentsAndSkills.skills.length + undupedTalents.size);
+    if (totalCount == 0) {
+        return message.reply(`Didn't find any skills or talents matching '${search}', sorry.`);
+    }
 
-      talentsAndSkills.talents.forEach(talent => {
-          shortVersions.push(TalentFormatter.shortText(talent, true));
-      });
-      return message.channel.send(`There are ${totalCount} matches for '${search}':\n${shortVersions.join("\n")}\nBe more specific for more detail.`);
-  }
+    if (totalCount > 10) {
+        return message.reply(`You're going to have to be way more specific, there are ${totalCount} matches for '${search}'.`);
+    }
 
-  const mentionedSkills: string[] = [];
+    if (totalCount > 4 && totalCount <= 10) {
+        const shortVersions: string[] = [];
+        talentsAndSkills.skills.forEach(skill => {
+            shortVersions.push(SkillFormatter.shortText(skill, true));
+        });
+        undupedTalents.forEach((v, k) => {
+            if (v.length == 1) shortVersions.push(TalentFormatter.shortText(v[0], true));
+            else shortVersions.push(TalentFormatter.shortDupeText(v));
+        });
+        return message.channel.send(`There are ${totalCount} matches for '${search}':\n${shortVersions.join("\n")}\nBe more specific for more detail.`);
+    }
 
-  if (useEmbeds) {
-      const embed = new RichEmbed().setColor(0x00AE86);
+    if (useEmbeds) {
+        const embed = new RichEmbed().setColor(0x00AE86);
 
-      talentsAndSkills.skills.forEach(skill => {
-          mentionedSkills.push(skill.name);
-          SkillFormatter.embed(embed, skill, true);
-      });
+        talentsAndSkills.skills.forEach(skill => {
+            SkillFormatter.embed(embed, skill, true);
+        });
+        undupedTalents.forEach((v, k) => {
+            if (v.length == 1) TalentFormatter.embed(embed, v[0], true);
+            else TalentFormatter.embedDupe(embed, v);
+        });
 
-      talentsAndSkills.talents.forEach(talent => {
-          if (!_.includes(mentionedSkills, talent.name)) {
-              TalentFormatter.embed(embed, talent, true);
-              mentionedSkills.push(talent.name);
-          }
-      });
+        return message.channel.send({ embed })
+            .catch(console.error);
+    } else {
+        let textResponse = "";
+        talentsAndSkills.skills.forEach(skill => {
+            textResponse += SkillFormatter.longText(skill, true);
+        });
 
-      return message.channel.send({ embed })
-          .catch(console.error);
-  } else {
-      let textResponse = "";
-      talentsAndSkills.skills.forEach(skill => {
-          mentionedSkills.push(skill.name);
-          textResponse += SkillFormatter.longText(skill, true);
-      });
+        undupedTalents.forEach((v, k) => {
+            if (v.length == 1) textResponse += TalentFormatter.longText(v[0], true);
+            else textResponse += TalentFormatter.longDupeText(v);
+        });
 
-      talentsAndSkills.talents.forEach(talent => {
-          if (!_.includes(mentionedSkills, talent.name)) {
-              textResponse += TalentFormatter.longText(talent, true);
-              mentionedSkills.push(talent.name);
-          }
-      });
-
-      return message.channel.send(textResponse);
-  }
+        return message.channel.send(textResponse);
+    }
 
 }
