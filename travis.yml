@@ -1,0 +1,13 @@
+dist: trusty
+language: node_js
+node_js:   
+  - "8"
+cache:
+  directories:
+    - "node_modules"
+before_install:
+  - git submodule init
+  - git submodule update
+  - "npm config set spin false"
+script:
+  - "npm run build"
