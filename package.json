@@ -5,13 +5,24 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build-ts && npm run tslint && npm run copy-static",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "build-ts": "tsc",
+    "copy-static": "ts-node copyStatic.ts"
   },
-  "author": "",
+  "author": "Tom Dietrich",
   "license": "ISC",
   "dependencies": {
     "discord-akairo": "^7.5.4",
     "discord.js": "^11.3.0",
     "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.0",
+    "@types/lodash": "^4.14.99",
+    "typescript": "^2.7.1",
+    "tslint": "5.9.1",
+    "ts-node": "4.1.0",
+    "shelljs": "0.8.1"
   }
 }
