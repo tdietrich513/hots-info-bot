@@ -6,4 +6,5 @@ export interface ISkillData {
     cooldown: string;
     manaCost: string;
     description: string;
+    state: string;
 }
