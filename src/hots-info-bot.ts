@@ -1,7 +1,7 @@
 import { AkairoClient, AkairoOptions } from "discord-akairo";
-import { getSkillData } from "./load-data";
 import * as fs from "fs";
 import { ClientOptions } from "discord.js";
+import HeroData from "./hero-data";
 
 const akairoOptions: AkairoOptions = {
     prefix: "##",
@@ -10,6 +10,9 @@ const akairoOptions: AkairoOptions = {
 };
 const clientOptions: ClientOptions = {};
 const client = new AkairoClient(akairoOptions, clientOptions);
+
+console.log("Loading data...");
+HeroData.loadData();
 
 fs.readFile("../secrets.json", "utf-8", (err, content) => {
     if (err) {

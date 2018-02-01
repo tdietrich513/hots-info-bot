@@ -8,7 +8,8 @@
     "build": "npm run build-ts && npm run tslint && npm run copy-static",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "build-ts": "tsc",
-    "copy-static": "ts-node copyStatic.ts"
+    "copy-static": "ts-node copyStatic.ts",
+    "clean": "ts-node cleanUp.ts"
   },
   "author": "Tom Dietrich",
   "license": "ISC",
