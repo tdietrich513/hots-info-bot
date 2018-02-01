@@ -10,7 +10,6 @@ export default class HeroData {
   static loadData(): void {
     this.getSkillData(this.processHero).then(() => {
       console.info(`Import complete`);
-      console.info(`Loaded ${HeroData.heroNames.length} heroes, ${HeroData.talents.length} talents, and ${HeroData.skills.length} skills.`);
     });
   }
 
@@ -83,8 +82,8 @@ export default class HeroData {
         talents: raw.talents,
         skills: new Array()
       };
-      for (const hero in raw.abilities) {
-        processed.skills.push(raw.abilities[hero]);
+      for (const state in raw.abilities) {
+        processed.skills.push({ state: state, abilities: raw.abilities[state] });
       }
 
       onHero(processed);
@@ -104,8 +103,9 @@ export default class HeroData {
 
     HeroData.heroNames.push(heroSummary.nameLower);
 
-    hero.skills.forEach((skillSet: any) => {
-      skillSet.forEach((skill: any) => {
+    hero.skills.forEach((skillSet: { state: string, abilities: any[] }) => {
+      const stateName = skillSet.state.replace(hero.name, "");
+      skillSet.abilities.forEach((skill: any) => {
         let hotkey = skill.hotkey;
         if (!hotkey || hotkey == undefined || hotkey == undefined) {
           hotkey = skill.trait ? "Trait" : "Passive";
@@ -117,7 +117,8 @@ export default class HeroData {
           hotkey: hotkey,
           cooldown: skill.cooldown || "None",
           manaCost: skill.manaCost || "None",
-          description: skill.description
+          description: skill.description,
+          state: stateName
         };
         heroSummary.skills.push(skillSummary);
         HeroData.skills.push(skillSummary);
