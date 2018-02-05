@@ -10,11 +10,20 @@ export class TalentFormatter {
         return `**${talent.name}** _(Level ${talent.tier})_`;
     }
 
-    static shortDupeText(talents: ITalentData[]): string {
+    static shortDupeText(talents: ITalentData[], multiLine: boolean): string {
         let output = `**${talents[0].name}**`;
-        talents.forEach(t => {
-            output += `\n\t${t.hero} (Level ${t.tier})`;
-        });
+        if (multiLine) {
+            talents.forEach(t => {
+                output += `\n\t${t.hero} (Level ${t.tier})`;
+            });
+        } else {
+            const heroNames: string[] = [];
+            talents.forEach(t => {
+                heroNames.push(`${t.hero} (${t.tier})`);
+            });
+            output += ` Heroes: [_${heroNames.join(", ")}_]`;
+        }
+
         return output;
     }
 

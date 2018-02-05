@@ -32,6 +32,25 @@ export default class HeroData {
     return matches;
   }
 
+  static descriptionSearch(effect: string): ISkillsAndTalentsResult {
+    const matches: ISkillsAndTalentsResult = { skills: [], talents: [] };
+    const pattern = new RegExp(effect, "ig");
+
+    this.skills.forEach(skill => {
+      if (pattern.test(skill.description)) {
+        matches.skills.push(skill);
+      }
+    });
+
+    this.talents.forEach(talent => {
+      if (pattern.test(talent.description)) {
+        matches.talents.push(talent);
+      }
+    });
+
+    return matches;
+  }
+
   static findHeroTalentTier(heroName: string, tier: string): ITalentData[] {
     const heroNameLower = heroName.toLowerCase();
     const matchingHero = this.heroes.find(h => {

@@ -7,60 +7,55 @@ import HeroData from "../hero-data";
 
 import * as _ from "lodash";
 
-class SkillOrTalentSearchCommand extends Command {
+class DescriptionSearchCommand extends Command {
   constructor() {
-    super("skillOrTalentSearch", {
+    super("descriptionSearch", {
       cooldown: 1000,
-      ratelimit: 4
+      ratelimit: 1
     });
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[[\w\s\-\:]+?\]\]/ig;
+  pattern: RegExp = /\[\[\?[\w\s]+?\]\]/ig;
   testMessage(message: Message): boolean {
     if (!this.pattern.test(message.cleanContent)) {
       return false;
     }
     const rawSearches = message.cleanContent.match(this.pattern);
     const searches = this.cleanSearches(rawSearches);
-    const stSearches = this.nonHeroSearches(searches);
-    return stSearches.length > 0;
-  }
-
-  nonHeroSearches(searches: string[]): string[] {
-    return searches.filter(hero => {
-      return !HeroData.heroNames.some(hn => hn == hero.toLowerCase());
-    });
+    return searches.length > 0;
   }
 
   cleanSearches(searches: RegExpMatchArray): string[] {
     return _.chain(searches)
-      .map(m => m.replace(/(\[|\])/ig, "").replace(/\s/ig, " ").trim())
+      .map(m => m.replace(/(\[|\]|\?)/ig, "").replace(/\s/ig, " ").trim())
       .uniqBy(m => m)
       .value();
   }
 
   public exec(message: Message): any {
     const rawSearches = message.cleanContent.match(this.pattern);
-    const searches = this.cleanSearches(rawSearches);
-    let stSearches = this.nonHeroSearches(searches);
-    if (stSearches.length == 0) return;
-    if (stSearches.length > 4) {
-      message.reply("sorry, I can only display up to 4 searches at a time.");
-      stSearches = stSearches.slice(0, 4);
+    let searches = this.cleanSearches(rawSearches);
+    if (searches.length == 0) return;
+    if (searches.length > 4) {
+      message.reply("sorry, I can only display 1 search at a time.");
+      searches = searches.slice(0, 1);
+    }
+    if (searches[0].length < 4) {
+      message.reply(`${searches[0]} is a little short, give me something longer to search for please.`);
     }
     const useEmbeds = canUseEmbeds(message);
 
-    stSearches.forEach(search => {
+    searches.forEach(search => {
       if (search.trim() == "") {
         return message.reply(`You're going to have to give me _something_ to look for.`);
       }
 
-      const results = HeroData.findSkillOrTalent(search);
+      const results = HeroData.descriptionSearch(search);
 
       return outputSkillsOrTalents(results, search, message, useEmbeds);
     });
   }
 }
 
-module.exports = SkillOrTalentSearchCommand;
+module.exports = DescriptionSearchCommand;
