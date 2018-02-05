@@ -6,7 +6,9 @@ import HeroData from "./hero-data";
 const akairoOptions: AkairoOptions = {
     prefix: "##",
     allowMention: true,
-    commandDirectory: "./commands/"
+    commandDirectory: "./commands/",
+    inhibitorDirectory: "./inhibitors/",
+    listenerDirectory: "./listeners/"
 };
 const clientOptions: ClientOptions = {};
 const client = new AkairoClient(akairoOptions, clientOptions);

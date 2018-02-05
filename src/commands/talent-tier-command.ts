@@ -11,7 +11,10 @@ import HeroData from "../hero-data";
 
 class TalentTierCommand extends Command {
   constructor() {
-    super("talenttier", {});
+    super("talenttier", {
+      cooldown: 1000,
+      ratelimit: 1
+    });
     super.condition = this.testMessage;
   }
 
