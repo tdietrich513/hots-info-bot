@@ -11,7 +11,10 @@ import HeroData from "../hero-data";
 
 class SkillOrTalentSearchCommand extends Command {
   constructor() {
-    super("search", {});
+    super("search", {
+      cooldown: 1000,
+      ratelimit: 4
+    });
     super.condition = this.testMessage;
   }
 
@@ -28,7 +31,7 @@ class SkillOrTalentSearchCommand extends Command {
 
   nonHeroSearches(searches: string[]): string[] {
     return searches.filter(hero => {
-      return !HeroData.heroNames.some(hn => hn == hero.toLowerCase() && hero.toLowerCase() !== "jimmy");
+      return !HeroData.heroNames.some(hn => hn == hero.toLowerCase());
     });
   }
 

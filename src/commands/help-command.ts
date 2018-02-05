@@ -4,7 +4,9 @@ import { Message } from "discord.js";
 class HelpCommand extends Command {
   constructor() {
     super("help", {
-      aliases: ["help"]
+      aliases: ["help"],
+      cooldown: 3000,
+      ratelimit: 1
     });
   }
 

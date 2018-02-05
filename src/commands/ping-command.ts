@@ -4,7 +4,9 @@ import { Message } from "discord.js";
 class PingCommand extends Command {
     constructor() {
         super("ping", {
-            aliases: ["ping"]
+            aliases: ["ping"],
+            cooldown: 1000,
+            ratelimit: 1
         });
     }
 
