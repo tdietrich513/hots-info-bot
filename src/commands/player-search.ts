@@ -26,32 +26,12 @@ class PlayerSearch extends Command {
         return this.pattern.test(message.cleanContent);
     }
 
-
-
-    extractRegion(search: string): number {
-        const regionPart = search.match(/(us|eu|kr|cn)/i)[0];
-        return this.regionMap[regionPart.toLowerCase()];
-    }
-
-    extractPlayerName(search: string): string {
-        const playerNamePart = search.match(/\/.+#/i)[0];
-        const orgLength = playerNamePart.length;
-        return playerNamePart.slice(1, orgLength - 1);
-    }
-
-    extractTagNum(search: string): string {
-        return search.match(/\#\d{3,5}/i)[0].slice(1);
-    }
-
     public exec(message: Message): any {
-        const rawSearches = message.cleanContent.match(this.pattern);
-        if (rawSearches.length > 1) {
-            message.reply(`Sorry, I can only search for one player at a time. Here's ${rawSearches[0]}`);
-        }
-        const search = rawSearches[0];
-        const region = this.extractRegion(search);
-        const name = this.extractPlayerName(search);
-        const tagNum = this.extractTagNum(search);
+        const matches = message.cleanContent.match(this.pattern);
+
+        const region = this.regionMap[matches[1].toLowerCase()];
+        const name = matches[2];
+        const tagNum = matches[3];
         const formattedPlayerName = `${region}/${name}_${tagNum}`;
         const requestUri = `https://api.hotslogs.com/Public/Players/${formattedPlayerName}`;
         console.log(requestUri);
@@ -66,12 +46,12 @@ class PlayerSearch extends Command {
                 return message.reply("There was an error getting stats from hotslogs, sorry.");
             });
             res.on("end", () => {
-                if (!body) {
-                    return message.reply(`Couldn't get stats for ${name}, sorry.`);
+                console.log(body);
+                if (!body || body === "null") {
+                    return message.reply(`Couldn't find stats for ${region}/${name}#${tagNum} on hotslogs, sorry.`);
                 }
                 const result = JSON.parse(body);
-                console.log(body);
-                if (!result.LeaderboardRankings) {
+                if (!result || !result.LeaderboardRankings) {
                     return message.reply("There was problem parsing the results from hotslogs, sorry.");
                 }
                 const qm = result.LeaderboardRankings.find(r => r.GameMode === "QuickMatch");
