@@ -29,6 +29,13 @@ Display a Hero's talent tier by searching for the hero's name (or part of it) fo
 
 For example `[[Hammer/10]]`.
 
+### Player Search
+Display a player's MMR rating according to hotslogs public API. Search for the player's region and battle tag.
+
+For Example `[[us/player#1234]]`.
+
+Supported region prefixes are `us`, `eu`, `kr`, and `cn`. 
+
 ### Notes:
 The bot will only search for the first four items in any given message. If there are too many results for any given search, the bot will attempt to truncate the results to avoid spamming the channel, and if there are way too many results, the bot will send you a direct message with your results.
 
