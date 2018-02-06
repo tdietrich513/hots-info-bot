@@ -48,7 +48,7 @@ class PlayerSearch extends Command {
             res.on("end", () => {
                 console.log(body);
                 if (!body || body === "null") {
-                    return message.reply(`Couldn't find stats for ${region}/${name}#${tagNum} on hotslogs, sorry.`);
+                    return message.reply(`Couldn't find stats for ${matches[1]}/${name}#${tagNum} on hotslogs, sorry.`);
                 }
                 const result = JSON.parse(body);
                 if (!result || !result.LeaderboardRankings) {
