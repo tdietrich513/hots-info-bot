@@ -34,7 +34,6 @@ class PlayerSearch extends Command {
         const tagNum = matches[3];
         const formattedPlayerName = `${region}/${name}_${tagNum}`;
         const requestUri = `https://api.hotslogs.com/Public/Players/${formattedPlayerName}`;
-        console.log(requestUri);
 
         https.get(requestUri, (res => {
             res.setEncoding("utf8");
@@ -46,7 +45,6 @@ class PlayerSearch extends Command {
                 return message.reply("There was an error getting stats from hotslogs, sorry.");
             });
             res.on("end", () => {
-                console.log(body);
                 if (!body || body === "null") {
                     return message.reply(`Couldn't find stats for ${matches[1]}/${name}#${tagNum} on hotslogs, sorry.`);
                 }
