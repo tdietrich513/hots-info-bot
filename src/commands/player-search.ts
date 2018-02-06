@@ -22,6 +22,15 @@ class PlayerSearch extends Command {
         "cn": 5
     };
 
+    leagueMap = {
+        0: "Master",
+        1: "Diamond",
+        2: "Platinum",
+        3: "Gold",
+        4: "Silver",
+        5: "Bronze"
+    };
+
     testMessage(message: Message): boolean {
         return this.pattern.test(message.cleanContent);
     }
@@ -52,18 +61,32 @@ class PlayerSearch extends Command {
                 if (!result || !result.LeaderboardRankings) {
                     return message.reply("There was problem parsing the results from hotslogs, sorry.");
                 }
+                const playerId = result.PlayerID;
                 const qm = result.LeaderboardRankings.find(r => r.GameMode === "QuickMatch");
                 const hl = result.LeaderboardRankings.find(r => r.GameMode === "HeroLeague");
                 const ud = result.LeaderboardRankings.find(r => r.GameMode === "UnrankedDraft");
                 const tl = result.LeaderboardRankings.find(r => r.GameMode === "TeamLeague");
 
-                let response = `Current stats for ${name}:\n`;
-                if (qm && qm.CurrentMMR) response += `\tQuick Match MMR: ${qm.CurrentMMR}\n`;
-                if (hl && hl.CurrentMMR) response += `\tHero League MMR: ${hl.CurrentMMR}\n`;
-                if (ud && ud.CurrentMMR) response += `\tUnranked Draft MMR: ${ud.CurrentMMR}\n`;
-                if (tl && tl.CurrentMMR) response += `\tTeam League MMR: ${tl.CurrentMMR}\n`;
-                response += "_(all data sourced from hotslogs public API)_";
-                message.channel.send(response);
+                if (!canUseEmbeds(message)) {
+                    let response = `Current hotslogs MMR for ${matches[1]}/${name}#${tagNum}:\n`;
+                    if (qm && qm.CurrentMMR) response += `\tQuick Match: ${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_\n`;
+                    if (hl && hl.CurrentMMR) response += `\tHero League: ${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_\n`;
+                    if (ud && ud.CurrentMMR) response += `\tUnranked Draft: ${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_\n`;
+                    if (tl && tl.CurrentMMR) response += `\tTeam League: ${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_\n`;
+                    message.channel.send(response)
+                        .catch(console.error);
+                } else {
+                    const embed = new RichEmbed().setColor(0x00AE86);
+                    embed.setTitle(`Stats for ${matches[1]}/${name}#${tagNum}:`);
+                    embed.setDescription(`Sourced from [Hotslogs.com](https://www.hotslogs.com/Player/Profile?PlayerId=${playerId})`);
+                    if (qm && qm.CurrentMMR) embed.addField("Quick Match", `${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_`);
+                    if (hl && hl.CurrentMMR) embed.addField("Hero League", `${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_`);
+                    if (ud && ud.CurrentMMR) embed.addField("Unranked Draft", `${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_`);
+                    if (tl && tl.CurrentMMR) embed.addField("Team League", `${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_`);
+                    message.channel.send({embed})
+                        .catch(console.error);
+                }
+
             });
         }));
     }
