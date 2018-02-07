@@ -74,20 +74,20 @@ class PlayerSearch extends Command {
 
                 if (!canUseEmbeds(message)) {
                     let response = `Current *HotsLogs MMR* for ${matches[1]}/${name}#${tagNum}:\n`;
-                    if (qm && qm.CurrentMMR && qm.LeagueID) response += `\tQuick Match: ${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_\n`;
-                    if (hl && hl.CurrentMMR && hl.LeagueID) response += `\tHero League: ${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_\n`;
-                    if (ud && ud.CurrentMMR && ud.LeagueID) response += `\tUnranked Draft: ${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_\n`;
-                    if (tl && tl.CurrentMMR && tl.LeagueID) response += `\tTeam League: ${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_\n`;
+                    if (qm && qm.CurrentMMR && this.leagueMap[qm.LeagueID]) response += `\tQuick Match: ${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_\n`;
+                    if (hl && hl.CurrentMMR && this.leagueMap[hl.LeagueID]) response += `\tHero League: ${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_\n`;
+                    if (ud && ud.CurrentMMR && this.leagueMap[ud.LeagueID]) response += `\tUnranked Draft: ${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_\n`;
+                    if (tl && tl.CurrentMMR && this.leagueMap[tl.LeagueID]) response += `\tTeam League: ${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_\n`;
                     message.channel.send(response)
                         .catch(console.error);
                 } else {
                     const embed = new RichEmbed().setColor(0x00AE86);
                     embed.setTitle(`Current MMR for ${matches[1]}/${name}#${tagNum}:`);
                     embed.setDescription(`Sourced from [Hotslogs.com](https://www.hotslogs.com/Player/Profile?PlayerId=${playerId})`);
-                    if (qm && qm.CurrentMMR && qm.LeagueID) embed.addField("Quick Match", `${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_`);
-                    if (hl && hl.CurrentMMR && hl.LeagueID) embed.addField("Hero League", `${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_`);
-                    if (ud && ud.CurrentMMR && ud.LeagueID) embed.addField("Unranked Draft", `${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_`);
-                    if (tl && tl.CurrentMMR && tl.LeagueID) embed.addField("Team League", `${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_`);
+                    if (qm && qm.CurrentMMR && this.leagueMap[qm.LeagueID]) embed.addField("Quick Match", `${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_`);
+                    if (hl && hl.CurrentMMR && this.leagueMap[hl.LeagueID]) embed.addField("Hero League", `${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_`);
+                    if (ud && ud.CurrentMMR && this.leagueMap[ud.LeagueID]) embed.addField("Unranked Draft", `${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_`);
+                    if (tl && tl.CurrentMMR && this.leagueMap[tl.LeagueID]) embed.addField("Team League", `${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_`);
                     message.channel.send({ embed })
                         .catch(console.error);
                 }
