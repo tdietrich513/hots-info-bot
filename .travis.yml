@@ -10,7 +10,8 @@ before_install:
 script:
   - "npm run build"
 before_deploy: 
-  - tar -zcf ${TRAVIS_BUILD_DIR}-${TRAVIS_BUILD_NUMBER}.tar.gz ${REPO}
+  - cd ..
+  - tar -zcf $TRAVIS_BUILD_DIR-$TRAVIS_BUILD_NUMBER.tar.gz $REPO
 deploy:
   provider: elasticbeanstalk
   access_key_id: AKIAJZZHIFXNNNCZSTFQ
@@ -19,5 +20,5 @@ deploy:
   region: "us-east-2"  
   app: hots-info-bot-prod
   env: HotsInfoBotProd-env
-  zip_file: ${TRAVIS_BUILD_DIR}-${TRAVIS_BUILD_NUMBER}.tar.gz
+  zip_file: $TRAVIS_BUILD_DIR-$TRAVIS_BUILD_NUMBER.tar.gz
   bucket_name: elasticbeanstalk-us-east-2-574568975591
