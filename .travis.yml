@@ -10,7 +10,7 @@ before_install:
 script:
   - "npm run build"
 before_deploy:   
-  - zip -r hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip . -x .vs\* .vscode\* .git\* dist\* node_modules\* *.zip
+  - zip -r hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip . -x .vs\* .vscode\* .git\* node_modules\* *.zip .env .ruby-version .travis.yml
 deploy:
   provider: elasticbeanstalk
   access_key_id: AKIAJZZHIFXNNNCZSTFQ
@@ -22,3 +22,5 @@ deploy:
   zip_file: hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip
   bucket_name: elasticbeanstalk-us-east-2-574568975591
   skip_cleanup: true
+  on:
+    branch: release
