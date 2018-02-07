@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build-ts && node dist/hots-info-bot.js",
+    "start": "node dist/hots-info-bot.js",
     "build": "npm run build-ts && npm run tslint",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "build-ts": "tsc",

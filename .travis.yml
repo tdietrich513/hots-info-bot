@@ -22,5 +22,3 @@ deploy:
   zip_file: hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip
   bucket_name: elasticbeanstalk-us-east-2-574568975591
   skip_cleanup: true
-  on:
-    branch: release
