@@ -17,7 +17,11 @@ class PlayerSearch extends Command {
     pattern: RegExp = /\[\[(us|eu|kr|cn)\/(\w+)\#(\d{3,5})\]\]/i;
     regionMap = {
         "us": 1,
+        "am": 1,
+        "na": 1,
         "eu": 2,
+        "as": 3,
+        "az": 3,
         "kr": 3,
         "cn": 5
     };
@@ -83,7 +87,7 @@ class PlayerSearch extends Command {
                     if (hl && hl.CurrentMMR) embed.addField("Hero League", `${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_`);
                     if (ud && ud.CurrentMMR) embed.addField("Unranked Draft", `${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_`);
                     if (tl && tl.CurrentMMR) embed.addField("Team League", `${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_`);
-                    message.channel.send({embed})
+                    message.channel.send({ embed })
                         .catch(console.error);
                 }
 
