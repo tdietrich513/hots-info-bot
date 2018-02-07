@@ -18,7 +18,7 @@ class HeroOverviewCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[[\w\s]+?\]\]/ig;
+  pattern: RegExp = /\[\[[\w\s']+?\]\]/ig;
   testMessage(message: Message): boolean {
     if (!this.pattern.test(message.cleanContent)) {
       return false;

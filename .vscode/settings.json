@@ -10,5 +10,6 @@
     "tslint.exclude": "**/node_modules/**/*",
     "cSpell.words": [
         "definitelytyped"
-    ]
+    ],
+    "editor.tabSize": 2
 }

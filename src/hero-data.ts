@@ -1,16 +1,22 @@
 import * as fs from "fs";
-import { ISkillData, IHeroData, ITalentData, ISkillsAndTalentsResult } from "./interfaces";
+import { ISkillData, IHeroData, ITalentData, ISkillsAndTalentsResult, IWinRate } from "./interfaces";
+import { getWinRates } from "./get-winrates";
 
 export default class HeroData {
   static skills: ISkillData[] = [];
   static talents: ITalentData[] = [];
   static heroes: IHeroData[] = [];
   static heroNames: string[] = [];
+  static winrates: IWinRate[] = [];
 
   static loadData(): void {
     this.getSkillData(this.processHero).then(() => {
       console.info(`Import complete`);
     });
+  }
+
+  static refreshWinRate(): void {
+    getWinRates(data => this.winrates = data);
   }
 
   static findSkillOrTalent(name: string): ISkillsAndTalentsResult {
