@@ -94,7 +94,7 @@ export default class HeroData {
 
   private static getSkillData(onHero: (hd: any) => void): Promise<boolean> {
     const heroes = [];
-    return this.readFiles("./hero-data/", (fileName, content) => {
+    return this.readFiles(process.env.DATA_PATH, (fileName, content) => {
       const raw = JSON.parse(content);
       const processed = {
         name: raw.name,

@@ -3,12 +3,22 @@ import * as fs from "fs";
 import { ClientOptions } from "discord.js";
 import HeroData from "./hero-data";
 
+if (!process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN === "") {
+    console.error("Could not find the DISCORD_BOT_TOKEN environment variable!");
+    process.exit(1);
+}
+
+if (!process.env.DATA_PATH || process.env.DATA_PATH === "") {
+    console.error("Could not find the DATA_PATH environment variable!");
+    process.exit(1);
+}
+
 const akairoOptions: AkairoOptions = {
     prefix: "##",
     allowMention: true,
-    commandDirectory: "./commands/",
-    inhibitorDirectory: "./inhibitors/",
-    listenerDirectory: "./listeners/"
+    commandDirectory: __dirname + "/commands/",
+    inhibitorDirectory: __dirname + "/inhibitors/",
+    listenerDirectory: __dirname + "/listeners/"
 };
 const clientOptions: ClientOptions = {};
 const client = new AkairoClient(akairoOptions, clientOptions);
@@ -16,16 +26,7 @@ const client = new AkairoClient(akairoOptions, clientOptions);
 console.log("Loading data...");
 HeroData.loadData();
 
-fs.readFile("../secrets.json", "utf-8", (err, content) => {
-    if (err) {
-        console.log("Make sure a secrets.json exists and contains the bot token!");
-        console.error(err);
-        return;
-    }
-    const secrets = JSON.parse(content);
-
-    client.login(secrets.token).then(() => {
-        console.log("Logged in!");
-    });
+client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
+    console.log("Logged in!");
 });
 

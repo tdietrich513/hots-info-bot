@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "build": "npm run build-ts && npm run tslint && npm run copy-static",
+    "start": "npm run build-ts && node dist/hots-info-bot.js",
+    "build": "npm run build-ts && npm run tslint",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "build-ts": "tsc",
-    "copy-static": "ts-node copyStatic.ts",
+    "serve": "npm run build-ts && node -r dotenv/config dist/hots-info-bot.js",    
     "clean": "ts-node cleanUp.ts"
   },
   "author": "Tom Dietrich",
@@ -16,6 +16,7 @@
   "dependencies": {
     "discord-akairo": "^7.5.4",
     "discord.js": "^11.3.0",
+    "dotenv": "^5.0.0",
     "lodash": "^4.17.4"
   },
   "devDependencies": {

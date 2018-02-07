@@ -9,3 +9,15 @@ before_install:
   - "npm config set spin false"
 script:
   - "npm run build"
+before_deploy: 
+  - tar -zcf ${TRAVIS_BUILD_DIR}-${TRAVIS_BUILD_NUMBER}.tar.gz ${REPO}
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: AKIAJZZHIFXNNNCZSTFQ
+  secret_access_key:
+    secure: "kDxG3vaNHkrDG8gHj4BlQfM/me0XG5lVGOFnIi0gReAguXcEISLlimyl+3KXK5yV6/ldh3HMZvLk+F4OQJ5L74KQXipDiV1KHmSf/pHdPYkEA+E2Eairm9PJYu55IcGvcb9H+a404wT6+9jf1yAiDdWsz9pXL+3asKc/FnXBlQ8C7O3LLmAP3KXd8eqgwpyCvY8oPNuJ+0laDmEgA/HRcEpIfomAitxC00lXHgTpav9HikiaSX88sODIB/pIIY6X/JiEygu4Q+9RLFcLY5cif5p/4QpT041wR9/4e4Pf3xDjCmE+/LamQOSzE+hcYf2hiOqkf58nGqPaRk623L/XAQNrGAFCHJcMuZsJKW0jQiP9ajrjAiltlVHTfONQkz4zRzewNF9HCwrtZF+GZkid3iKaaIDkQ2IkhTnz54I4UmD/qR1ft5vEmHgrDOj2B7VZYzsgzJCObjf0peyibXyP0P1V1dRI4H71gefDP74XFcUU97yTD0po0cEbKZxcfLg2VL7u4LJmF1FVPMqi8SKan9NaxpLh/46nNYdoxfu1nXVdVc8nuY5SXl04RCXDxlb9/sJ+xqM8EKk2qJvBhBYlI31IxvIalMKwPjc5pOk9b/4UK05o9nV3PaGnY3W5n+8wEWU/ZLz/jfP4HdMRObKH+XdgmEgayLMYl05lwea0HmI="
+  region: "us-east-2"  
+  app: hots-info-bot-prod
+  env: HotsInfoBotProd-env
+  zip_file: ${TRAVIS_BUILD_DIR}-${TRAVIS_BUILD_NUMBER}.tar.gz
+  bucket_name: elasticbeanstalk-us-east-2-574568975591
