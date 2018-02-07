@@ -10,7 +10,7 @@ before_install:
 script:
   - "npm run build"
 before_deploy:   
-  - zip hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip
+  - zip -r hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip . -x .vs\* .vscode\* .git\* dist\* node_modules\* *.zip
 deploy:
   provider: elasticbeanstalk
   access_key_id: AKIAJZZHIFXNNNCZSTFQ
