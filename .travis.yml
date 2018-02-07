@@ -9,9 +9,8 @@ before_install:
   - "npm config set spin false"
 script:
   - "npm run build"
-before_deploy: 
-  - cd ..
-  - zip hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip ${TRAVIS_BUILD_DIR}
+before_deploy:   
+  - zip hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip
 deploy:
   provider: elasticbeanstalk
   access_key_id: AKIAJZZHIFXNNNCZSTFQ
@@ -22,3 +21,4 @@ deploy:
   env: HotsInfoBotProd-env
   zip_file: hotsinfobot-${TRAVIS_BUILD_NUMBER}.zip
   bucket_name: elasticbeanstalk-us-east-2-574568975591
+  skip_cleanup: true
