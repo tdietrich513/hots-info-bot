@@ -3,8 +3,8 @@ export interface ISkillData {
     name: string;
     hero: string;
     hotkey: string;
-    cooldown: string;
-    manaCost: string;
+    cooldown: number;
+    manaCost: number;
     description: string;
     state: string;
 }

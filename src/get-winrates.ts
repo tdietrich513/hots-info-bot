@@ -9,7 +9,7 @@ interface IRawRow {
   "Win Rate": string;
 }
 
-export function getWinRates(callBack: (winRates: IWinRate[]) => {}) {
+export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
   const heroNamePattern = /[^\n]+/i;
   const banPattern = /([\d|\,]+)\s+(\(\d+\.\d+\%\))/i;
 

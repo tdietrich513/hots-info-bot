@@ -9,11 +9,6 @@ if (!process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN === "") {
     process.exit(1);
 }
 
-if (!process.env.DATA_PATH || process.env.DATA_PATH === "") {
-    console.error("Could not find the DATA_PATH environment variable!");
-    process.exit(1);
-}
-
 const akairoOptions: AkairoOptions = {
     prefix: "##",
     allowMention: true,
@@ -24,14 +19,23 @@ const akairoOptions: AkairoOptions = {
 const clientOptions: ClientOptions = {};
 const client = new AkairoClient(akairoOptions, clientOptions);
 
-console.log("Loading data...");
+console.log("Pulling Hero Data");
 HeroData.loadData();
 console.log("Pulling Win Rate Data");
 HeroData.refreshWinRate();
 
-const refreshJob = schedule.scheduleJob("0 0/4 * * * ", () => {
+const every4Hours = new schedule.RecurrenceRule();
+every4Hours.hour = new schedule.Range(0, 23, 4);
+every4Hours.minute = 0;
+
+const winRateJob = schedule.scheduleJob("GetWinRates", every4Hours, () => {
     console.log("Refreshing Win Rate Data");
     HeroData.refreshWinRate();
+});
+
+const heroJob = schedule.scheduleJob("GetHeroData", every4Hours, () => {
+    console.log("Refreshing Hero Data");
+    HeroData.loadData();
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(() => {

@@ -1,6 +1,8 @@
 import * as fs from "fs";
-import { ISkillData, IHeroData, ITalentData, ISkillsAndTalentsResult, IWinRate } from "./interfaces";
+import { ISkillData, IHeroData, ITalentData, ISkillsAndTalentsResult, IWinRate, IHotsApiHero, IHotsApiAbility, IHotsApiTalent } from "./interfaces";
 import { getWinRates } from "./get-winrates";
+
+import fetch from "node-fetch";
 
 export default class HeroData {
   static skills: ISkillData[] = [];
@@ -11,12 +13,15 @@ export default class HeroData {
 
   static loadData(): void {
     this.getSkillData(this.processHero).then(() => {
-      console.info(`Import complete`);
+      console.info(`Heroes updating`);
     });
   }
 
   static refreshWinRate(): void {
-    getWinRates(data => this.winrates = data);
+    getWinRates(data => {
+      this.winrates = data;
+      console.info("Win Rates updated");
+    });
   }
 
   static findSkillOrTalent(name: string): ISkillsAndTalentsResult {
@@ -98,25 +103,16 @@ export default class HeroData {
     });
   }
 
-  private static getSkillData(onHero: (hd: any) => void): Promise<boolean> {
-    const heroes = [];
-    return this.readFiles(process.env.DATA_PATH, (fileName, content) => {
-      const raw = JSON.parse(content);
-      const processed = {
-        name: raw.name,
-        talents: raw.talents,
-        skills: new Array()
-      };
-      for (const state in raw.abilities) {
-        processed.skills.push({ state: state, abilities: raw.abilities[state] });
-      }
-
-      onHero(processed);
-    },
-      console.error);
+  private static getSkillData(onHero: (hd: IHotsApiHero) => void): Promise<void> {
+    const endpoint = "http://hotsapi.net/api/v1/heroes";
+    return fetch(endpoint).then(response => {
+      response.json().then((json: IHotsApiHero[]) => {
+        json.forEach(onHero);
+      }, console.error);
+    }, console.error);
   }
 
-  private static processHero(hero: any) {
+  private static processHero(hero: IHotsApiHero) {
     const heroSummary: IHeroData = {
       name: hero.name,
       nameLower: hero.name.toLowerCase(),
@@ -126,54 +122,65 @@ export default class HeroData {
       skills: []
     };
 
-    HeroData.heroNames.push(heroSummary.nameLower);
+    if (!HeroData.heroNames.some(n => n == heroSummary.nameLower)) HeroData.heroNames.push(heroSummary.nameLower);
 
-    hero.skills.forEach((skillSet: { state: string, abilities: any[] }) => {
-      const stateName = skillSet.state.replace(hero.name, "");
-      skillSet.abilities.forEach((skill: any) => {
-        let hotkey = skill.hotkey;
-        if (!hotkey || hotkey == undefined || hotkey == undefined) {
-          hotkey = skill.trait ? "Trait" : "Passive";
-        }
-        const skillSummary = {
-          nameLower: skill.name.toLowerCase(),
-          name: skill.name,
-          hero: hero.name,
-          hotkey: hotkey,
-          cooldown: skill.cooldown || "None",
-          manaCost: skill.manaCost || "None",
-          description: skill.description,
-          state: stateName
-        };
-        heroSummary.skills.push(skillSummary);
+    hero.abilities.forEach((skill: IHotsApiAbility) => {
+      const stateName = skill.owner.replace(hero.name, "");
+      let hotkey = skill.hotkey;
+      if (!hotkey && skill.trait) hotkey = "Trait";
+
+      const skillSummary: ISkillData = {
+        nameLower: skill.title.toLowerCase(),
+        name: skill.title,
+        hero: hero.name,
+        hotkey: hotkey,
+        cooldown: skill.cooldown,
+        manaCost: skill.mana_cost,
+        description: skill.description,
+        state: stateName
+      };
+      heroSummary.skills.push(skillSummary);
+      const existingSkillIndex = HeroData.skills.findIndex(s => s.name == skillSummary.name && s.hero == skillSummary.hero);
+      if (existingSkillIndex >= 0) {
+        HeroData.skills[existingSkillIndex] = skillSummary;
+      } else {
         HeroData.skills.push(skillSummary);
-      });
+      }
     });
 
-    let tierNum: string;
-    for (tierNum in hero.talents) {
-      const tier = hero.talents[tierNum];
-      const tierSummary: ITalentData[] = [];
-      tier.forEach((talent: any) => {
+    hero.talents.forEach(talent => {
+      const talentSummary: ITalentData = {
+        nameLower: talent.title.toLowerCase(),
+        name: talent.title,
+        hero: hero.name,
+        tier: talent.level.toString(),
+        description: talent.description
+      };
 
-        const talentSummary: ITalentData = {
-          nameLower: talent.name.toLowerCase(),
-          name: talent.name,
-          hero: hero.name,
-          tier: tierNum,
-          description: talent.description
-        };
+      if (!heroSummary.talents.has(talentSummary.tier)) {
+        heroSummary.talents.set(talentSummary.tier, [talentSummary]);
+      } else {
+        heroSummary.talents.get(talentSummary.tier).push(talentSummary);
+      }
+
+      const existingTalentIndex = HeroData.talents.findIndex(t => t.name == talentSummary.name && t.hero == talentSummary.hero);
+      if (existingTalentIndex >= 0) {
+        HeroData.talents[existingTalentIndex] = talentSummary;
+      } else {
         HeroData.talents.push(talentSummary);
-        tierSummary.push(talentSummary);
-      });
-      heroSummary.talents.set(tierNum, tierSummary);
-    }
-
-    HeroData.heroes.push(heroSummary);
-    HeroData.heroes.sort((a, b) => {
-      if (a.nameLower < b.nameLower) return -1;
-      if (a.nameLower > b.nameLower) return 1;
-      return 0;
+      }
     });
+
+    const existingHeroIndex = HeroData.heroes.findIndex(h => h.name == heroSummary.name);
+    if (existingHeroIndex >= 0) {
+      HeroData.heroes[existingHeroIndex] = heroSummary;
+    } else {
+      HeroData.heroes.push(heroSummary);
+      HeroData.heroes.sort((a, b) => {
+        if (a.nameLower < b.nameLower) return -1;
+        if (a.nameLower > b.nameLower) return 1;
+        return 0;
+      });
+    }
   }
 }
