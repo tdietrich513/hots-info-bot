@@ -19,13 +19,8 @@ export default class HeroData {
 
   static refreshWinRate(): void {
     getWinRates(data => {
-<<<<<<< HEAD
-      console.info(`Winrate Data Fetched`);
-      this.winrates = data;
-=======
       this.winrates = data;
       console.info("Win Rates updated");
->>>>>>> f0f2454f2e13a535a9c6c8b6af33a05d02310dee
     });
   }
 
