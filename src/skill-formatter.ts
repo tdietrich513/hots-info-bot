@@ -17,14 +17,14 @@ export class SkillFormatter {
         } else {
             if (skill.state !== "") output += ` (${skill.state})`;
         }
-        output += `\n**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n`;
+        output += `\n**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown || "None"}\t\t**Cost**: ${skill.manaCost || "None"}\n`;
         output += `_${skill.description}_\n\n`;
 
         return output;
     }
 
     static embed(embed: RichEmbed, skill: ISkillData, includeHero: boolean): RichEmbed {
-        let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown}\t\t**Cost**: ${skill.manaCost}\n\n`;
+        let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown || "None"}\t\t**Cost**: ${skill.manaCost || "None"}\n\n`;
         skillDescription += `_${skill.description}_\n\n`;
 
         let skillTitle = `${skill.name}`;
