@@ -5,8 +5,8 @@
         "noImplicitAny": false,
         "moduleResolution": "node",
         "sourceMap": true,
-        "outDir": "dist",
-        "baseUrl": ".",
+        "outDir": "dist",        
+        "baseUrl": ".",        
         "paths": {
             "*": [
                 "node_modules/*",

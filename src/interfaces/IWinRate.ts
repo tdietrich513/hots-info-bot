@@ -3,7 +3,7 @@ export interface IWinRate {
   hero: string;
   winRate: number;
   banCount: number;
-  banRate: number;
+  popRate: number;
   banRank?: number;
   popRank?: number;
 }

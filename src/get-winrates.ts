@@ -1,46 +1,46 @@
-import { convertUrl } from "tabletojson";
+import { convert } from "tabletojson";
 import { IWinRate } from "./interfaces";
 import * as _ from "lodash";
+import { ChildProcess } from "child_process";
+
+const phantomjs = require("phantomjs-prebuilt");
 
 interface IRawRow {
-  "Banned / Ban Rate": string;
-  "Games Played": string;
   Hero: string;
-  "Win Rate": string;
+  "Games Played": string;
+  "Games Banned": string;
+  Popularity: string;
+  "Win Percent": string;
 }
 
-export function getWinRates(callBack: (winRates: IWinRate[]) => {}) {
-  const heroNamePattern = /[^\n]+/i;
-  const banPattern = /([\d|\,]+)\s+(\(\d+\.\d+\%\))/i;
-
-  convertUrl("https://stormspy.net/", {}, (parseOutput: any) => {
-    const rawTable: IRawRow[] = parseOutput[0];
+export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
+  const program: ChildProcess = phantomjs.exec("./scrape-page.js");
+  let body = "";
+  program.stderr.pipe(process.stderr);
+  program.stdout.on("data", data => {
+    body += data;
+  });
+  program.stdout.on("end", () => {
+    const rawTable = convert(body)[1];
     const table: IWinRate[] = _.map(rawTable, (row: IRawRow): IWinRate => {
-      const bansData = row["Banned / Ban Rate"].match(banPattern);
-      const banCount = parseInt(bansData[1].replace(",", ""));
-      const bansPct = parseFloat(bansData[2].slice(1, bansData[2].length));
-      let heroName = row.Hero.match(heroNamePattern)[0];
-      if (heroName == "Lúcio") heroName = "Lucio";
-
-      const output: IWinRate =  {
+      const output: IWinRate = {
+        hero: row.Hero,
         games: parseInt(row["Games Played"].replace(",", "")),
-        hero: heroName,
-        winRate: parseFloat(row["Win Rate"]),
-        banCount: banCount,
-        banRate: bansPct
+        winRate: parseFloat(row["Win Percent"].replace(/\s\%/i, "")),
+        banCount: parseInt(row["Games Banned"].replace(",", "")),
+        popRate: parseFloat(row.Popularity.replace(/\s\%/i, ""))
       };
-
       return output;
     });
 
     _.chain(table)
-      .sortBy((wr: IWinRate) => -wr.banRate)
+      .sortBy((wr: IWinRate) => -wr.banCount)
       .value().forEach((wr, i) => {
         wr.banRank = i + 1;
       });
 
     _.chain(table)
-      .sortBy((wr: IWinRate) => -wr.games)
+      .sortBy((wr: IWinRate) => -wr.popRate)
       .value().forEach((wr, i) => {
         wr.popRank = i + 1;
       });

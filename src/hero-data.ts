@@ -16,7 +16,10 @@ export default class HeroData {
   }
 
   static refreshWinRate(): void {
-    getWinRates(data => this.winrates = data);
+    getWinRates(data => {
+      console.info(`Winrate Data Fetched`);
+      this.winrates = data;
+    });
   }
 
   static findSkillOrTalent(name: string): ISkillsAndTalentsResult {
