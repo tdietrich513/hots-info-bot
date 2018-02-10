@@ -24,16 +24,20 @@ HeroData.loadData();
 console.log("Pulling Win Rate Data");
 HeroData.refreshWinRate();
 
-const every4Hours = new schedule.RecurrenceRule();
-every4Hours.hour = new schedule.Range(0, 23, 4);
-every4Hours.minute = 0;
+const heroUpdateSchedule = new schedule.RecurrenceRule();
+heroUpdateSchedule.hour = [6, 10, 14, 18];
+heroUpdateSchedule.minute = 0;
 
-const winRateJob = schedule.scheduleJob("GetWinRates", every4Hours, () => {
+const winRateUpdateSchedule = new schedule.RecurrenceRule();
+winRateUpdateSchedule.hour = [0, 12];
+winRateUpdateSchedule.minute = 0;
+
+const winRateJob = schedule.scheduleJob("GetWinRates", winRateUpdateSchedule, () => {
     console.log("Refreshing Win Rate Data");
     HeroData.refreshWinRate();
 });
 
-const heroJob = schedule.scheduleJob("GetHeroData", every4Hours, () => {
+const heroJob = schedule.scheduleJob("GetHeroData", heroUpdateSchedule, () => {
     console.log("Refreshing Hero Data");
     HeroData.loadData();
 });
