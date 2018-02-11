@@ -1,9 +1,7 @@
 import { convert } from "tabletojson";
 import { IWinRate } from "./interfaces";
 import * as _ from "lodash";
-import { ChildProcess } from "child_process";
-
-const phantomjs = require("phantomjs-prebuilt");
+import { exec, ChildProcess } from "child_process";
 
 interface IRawRow {
   Hero: string;
@@ -14,7 +12,7 @@ interface IRawRow {
 }
 
 export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
-  const program: ChildProcess = phantomjs.exec("./scrape-page.js");
+  const program: ChildProcess = exec(`${process.env.PHANTOMJS_BIN} ./scrape-page.js`);
   let body = "";
   program.stderr.pipe(process.stderr);
   program.stdout.on("data", data => {

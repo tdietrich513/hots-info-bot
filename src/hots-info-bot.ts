@@ -9,6 +9,11 @@ if (!process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN === "") {
     process.exit(1);
 }
 
+if (!process.env.PHANTOMJS_BIN || process.env.PHANTOMJS_BIN === "") {
+    console.error("Could not find the PHANTOMJS_BIN environment variable!");
+    process.exit(1);
+}
+
 const akairoOptions: AkairoOptions = {
     prefix: "##",
     allowMention: true,
