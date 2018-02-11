@@ -12,7 +12,7 @@ interface IRawRow {
 }
 
 export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
-  const program: ChildProcess = exec(`${process.env.PHANTOMJS_BIN} ./scrape-page.js`);
+  const program: ChildProcess = exec(`${process.env.PHANTOMJS_BIN || "phantomjs"} ./scrape-page.js`);
   let body = "";
   program.stderr.pipe(process.stderr);
   program.stdout.on("data", data => {
