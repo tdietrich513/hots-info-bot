@@ -113,6 +113,8 @@ export default class HeroData {
   }
 
   private static processHero(hero: IHotsApiHero) {
+    if (hero.name == "Lúcio") hero.name = "Lucio";
+
     const heroSummary: IHeroData = {
       name: hero.name,
       nameLower: hero.name.toLowerCase(),
