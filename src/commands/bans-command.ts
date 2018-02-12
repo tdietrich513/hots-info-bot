@@ -15,21 +15,21 @@ class BansCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[bans\/(all|warrior|support|specialist|assassin)\]\]/i;
+  pattern: RegExp = /\[\[(ban|bans)\/(all|warrior|support|specialist|assassin)\]\]/i;
 
   testMessage(message: Message): boolean {
     return this.pattern.test(message.cleanContent);
   }
 
   topBans(message: Message): any {
-    let response = "Top 10 Most Popular Bans:";
+    let response = "Top 10 Most Popular Bans in the last 7 days:";
     const top10 = _.chain(HeroData.winrates)
       .sortBy((wr: IWinRate) => -wr.banCount)
       .take(10)
       .value();
 
     top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n\t${i + 1}:\t${wr.hero}`;
+      response += `\n\t${i + 1}:\t${wr.hero}\t(${wr.banCount})`;
     });
 
     return message.channel.send(response);
@@ -47,9 +47,9 @@ class BansCommand extends Command {
       .take(10)
       .value();
 
-    let response = `Top 10 Most Popular ${role} Bans:`;
+    let response = `Top 10 Most Popular ${role} Bans in the last 7 days:`;
     top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n\t${i + 1}:\t${wr.hero}`;
+      response += `\n\t${i + 1}:\t${wr.hero}\t(${wr.banCount})`;
     });
 
     return message.channel.send(response);
@@ -57,7 +57,7 @@ class BansCommand extends Command {
 
   public exec(message: Message): any {
     const matches = message.cleanContent.match(this.pattern);
-    const type = matches[1].toLowerCase();
+    const type = matches[2].toLowerCase();
     if (type == "all") {
       return this.topBans(message);
     }

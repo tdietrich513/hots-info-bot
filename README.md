@@ -29,6 +29,11 @@ Display a Hero's talent tier by searching for the hero's name (or part of it) fo
 
 For example `[[Hammer/10]]`.
 
+### Winrate, Pickrate, and Banrate
+Display the top 10 winrates, pickrates, and banrates by searching for `winrate`, `picks`, or `bans`, followed by `all` or a role (`warrior`, `support`, `assassin`, `specialist`).
+
+For example: `[[winrate/all]]` or `[[bans/warrior]]`
+
 ### Player Search
 Display a player's MMR rating according to hotslogs public API. Search for the player's region and battle tag.
 

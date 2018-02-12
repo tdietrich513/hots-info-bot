@@ -15,14 +15,14 @@ class WinRateCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[(winrate|wr)\/(all|warrior|support|specialist|assassin)\]\]/i;
+  pattern: RegExp = /\[\[(winrate|wr|wins|win)\/(all|warrior|support|specialist|assassin)\]\]/i;
 
   testMessage(message: Message): boolean {
     return this.pattern.test(message.cleanContent);
   }
 
   topWins(message: Message): any {
-    let response = "Top 10 Win Rates:";
+    let response = "Top 10 Win Rates in the last 7 days:";
     const top10 = _.chain(HeroData.winrates)
       .sortBy((wr: IWinRate) => -wr.winRate)
       .take(10)
@@ -47,7 +47,7 @@ class WinRateCommand extends Command {
       .take(10)
       .value();
 
-    let response = `Top 10 ${role} WinRates:`;
+    let response = `Top 10 ${role} WinRates in the last 7 days:`;
     top10.forEach((wr: IWinRate, i: number) => {
       response += `\n\t${i + 1}:\t${wr.hero}\t(${wr.winRate}%)`;
     });
