@@ -1,6 +1,6 @@
 import { AkairoClient, AkairoOptions } from "discord-akairo";
 import * as fs from "fs";
-import { ClientOptions } from "discord.js";
+import { Client, ClientOptions } from "discord.js";
 import HeroData from "./hero-data";
 import * as schedule from "node-schedule";
 
@@ -44,5 +44,8 @@ const heroJob = schedule.scheduleJob("GetHeroData", heroUpdateSchedule, () => {
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
     console.log("Logged in!");
+    if ( client instanceof Client ) {
+        client.user.setPresence({ game: { name: "try ##help for help" }});
+    }
 });
 

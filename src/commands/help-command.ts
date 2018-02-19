@@ -18,9 +18,10 @@ class HelpCommand extends Command {
     help += "To search for skills or talents across all heroes, just search for the name or part of the name, ie: `[[haunting wave]]`\n";
     help += "To search for skills or talents by key words in the description, prefix with a ?, ie: `[[?chill]]`\n";
     help += "To get Win, Pick, and Ban information, try `[[wins/all]]` `[[picks/all]]` and `[[bans/all]]`\n";
-    help += "You can also filter win, pick, and ban by role like `[[wins/warrior]]\n";
+    help += "You can also filter win, pick, and ban by role like `[[wins/warrior]]`\n";
     help += "I can also find player MMR by region and battletag- ie: `[[us/player#1234]]`. Valid regions are us, eu, kr, and cn";
-    message.reply("Check your PMs.");
+
+    message.react("👍");
     return message.author.send(help);
   }
 }
