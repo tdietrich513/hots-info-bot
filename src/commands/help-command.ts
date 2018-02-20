@@ -1,5 +1,6 @@
 import { Command } from "discord-akairo";
 import { Message } from "discord.js";
+import canUseReactions from "../can-use-reactions";
 
 class HelpCommand extends Command {
   constructor() {
@@ -21,7 +22,11 @@ class HelpCommand extends Command {
     help += "You can also filter win, pick, and ban by role like `[[wins/warrior]]`\n";
     help += "I can also find player MMR by region and battletag- ie: `[[us/player#1234]]`. Valid regions are us, eu, kr, and cn";
 
-    message.react("👍");
+    if (canUseReactions(message)) {
+      message.react("👍");
+    } else {
+      message.reply("check your PMs.");
+    }
     return message.author.send(help);
   }
 }

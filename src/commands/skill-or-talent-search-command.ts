@@ -53,7 +53,6 @@ class SkillOrTalentSearchCommand extends Command {
 
     stSearches.forEach(search => {
       if (search.trim() == "") {
-        message.react("🤷‍♀️");
         return message.reply(`You're going to have to give me _something_ to look for.`);
       }
 

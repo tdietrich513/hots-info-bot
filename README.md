@@ -4,11 +4,11 @@
 Discord chatbot for helpfully providing Heroes of the Storm skill and talent information in chat
 
 ## Adding the bot to your server
-If you're running a discord server, you should be able to add the bot by going [here](https://discordapp.com/oauth2/authorize?client_id=407735948667912214&scope=bot&permissions=0) and doing the needful.
+If you're running a discord server, you should be able to add the bot by going [here](https://discordapp.com/oauth2/authorize?client_id=407735948667912214&scope=bot&permissions=19520) and doing the needful.
 
 ## Usage
 
-Place double square brackes around the search, like so: `[[search]]`. The search can be anywhere in a message, and you can even perform more than one search per message.
+Place double square brackets around the search, like so: `[[search]]`. The search can be anywhere in a message, and you can even perform more than one search per message.
 
 ### Talent or Skill Searches
 Search for a talent or skill by surrounding your search with double square brackets. 
@@ -41,6 +41,10 @@ For Example `[[us/player#1234]]`.
 
 Supported region prefixes are `us`, `eu`, `kr`, and `cn`. 
 
+### Help Command 
+
+Type `##help` and you'll get a PM with a brief overview of each command.
+
 ### Notes:
 The bot will only search for the first four items in any given message. If there are too many results for any given search, the bot will attempt to truncate the results to avoid spamming the channel, and if there are way too many results, the bot will send you a direct message with your results.
 
@@ -49,5 +53,5 @@ Please ensure the bot has "Embed Images" permissions to get the best looking res
 Game information sourced from [this repo](https://github.com/heroespatchnotes/heroes-talents) and will only be as accurate as it is.
 
 ### Set up for development
-After installing all npm packages, create a file named `.env` and use it to set a `DISCORD_BOT_TOKEN` variable containing a valid discord App Bot User token. If you do not have phantom JS available on your PATH, you'll also want to set a `PHANTOMJS_BIN` variable with the location of a phantomJS executable that will run on your pc. The phantomjs-prebuilt package is set as a dev dependency, so you should be able to use  `.\node_modules\phantomjs-prebuilt\lib\phantom\bin\phantomjs.exe` for windows computers and `.\node_modules\phantomjs-prebuilt\bin\phantomjs` on MacOS and Linux computers.
+After installing all npm packages, create a file named `.env` and use it to set a `DISCORD_BOT_TOKEN` variable containing a valid discord App Bot User token. If you do not have phantom JS available on your PATH, you'll also want to set a `PHANTOMJS_BIN` variable with the location of a phantomJS executable that will run on your pc. The phantomjs-prebuilt package is set as a dev dependency, so you should be able to use  `.\node_modules\phantomjs-prebuilt\lib\phantom\bin\phantomjs.exe` for windows computers and `./node_modules/phantomjs-prebuilt/bin/phantomjs` on MacOS and Linux computers.
 
