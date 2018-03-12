@@ -22,15 +22,21 @@ class WinRateCommand extends Command {
   }
 
   topWins(message: Message): any {
-    let response = "Top 10 Win Rates in the last 7 days:";
     const top10 = _.chain(HeroData.winrates)
       .sortBy((wr: IWinRate) => -wr.winRate)
       .take(10)
       .value();
+    const nameLength = _.chain(top10)
+      .map((wr: IWinRate) => wr.hero.length)
+      .max()
+      .value();
 
+    let response = "Top 10 Win Rates in the last 7 days:";
+    response += "\n```";
     top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n\t${i + 1}:\t${wr.hero}\t(${wr.winRate}%)`;
+      response += `\n${_.padStart((i + 1) + "", 2)}: ${_.padEnd(wr.hero, nameLength)} (${wr.winRate}%)`;
     });
+    response += "\n```";
 
     return message.channel.send(response);
   }
