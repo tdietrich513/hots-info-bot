@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { IWinRate } from "../interfaces";
 import HeroData from "../hero-data";
 import canUseEmbeds from "../can-use-embeds";
+import { renderWinRateBarChart } from "../responses";
 
 class BansCommand extends Command {
   constructor() {
@@ -22,16 +23,13 @@ class BansCommand extends Command {
   }
 
   topBans(message: Message): any {
-    let response = "Top 10 Most Popular Bans in the last 7 days:";
     const top10 = _.chain(HeroData.winrates)
       .sortBy((wr: IWinRate) => -wr.banCount)
       .take(10)
       .value();
 
-    top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n\t${i + 1}:\t${wr.hero}\t(${wr.banCount})`;
-    });
-
+    let response = "Top 10 Most Popular Bans in the last 7 days:";
+    response += renderWinRateBarChart(top10, (wr) => wr.banCount);
     return message.channel.send(response);
   }
 
@@ -48,10 +46,7 @@ class BansCommand extends Command {
       .value();
 
     let response = `Top 10 Most Popular ${role} Bans in the last 7 days:`;
-    top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n\t${i + 1}:\t${wr.hero}\t(${wr.banCount})`;
-    });
-
+    response += renderWinRateBarChart(top10, (wr) => wr.banCount);
     return message.channel.send(response);
   }
 

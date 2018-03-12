@@ -10,6 +10,7 @@ export default class HeroData {
   static heroes: IHeroData[] = [];
   static heroNames: string[] = [];
   static winrates: IWinRate[] = [];
+  static totalGames: number = 0;
 
   static loadData(): void {
     this.getSkillData(this.processHero).then(() => {
@@ -20,6 +21,10 @@ export default class HeroData {
   static refreshWinRate(): void {
     getWinRates(data => {
       this.winrates = data;
+      if (data.length > 0) {
+        const gamesPickedAndBanned = data[0].games + data[0].banCount;
+        this.totalGames = gamesPickedAndBanned / (data[0].popRate / 100);
+      }
       console.info("Win Rates updated");
     });
   }
