@@ -18,6 +18,7 @@ const akairoOptions: AkairoOptions = {
 };
 const clientOptions: ClientOptions = {};
 const client = new AkairoClient(akairoOptions, clientOptions);
+const DEFAULT_STATUS = "try ##help for help";
 
 console.log("Pulling Hero Data");
 HeroData.loadData();
@@ -34,18 +35,26 @@ winRateUpdateSchedule.minute = 0;
 
 const winRateJob = schedule.scheduleJob("GetWinRates", winRateUpdateSchedule, () => {
     console.log("Refreshing Win Rate Data");
+    setStatus("Updating win rates");
     HeroData.refreshWinRate();
+    setStatus(DEFAULT_STATUS);
 });
 
 const heroJob = schedule.scheduleJob("GetHeroData", heroUpdateSchedule, () => {
     console.log("Refreshing Hero Data");
+    setStatus("Updating heroes data");
     HeroData.loadData();
+    setStatus(DEFAULT_STATUS);
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
     console.log("Logged in!");
-    if ( client instanceof Client ) {
-        client.user.setPresence({ game: { name: "try ##help for help" }});
-    }
+    setStatus(DEFAULT_STATUS);
 });
 
+
+function setStatus(status: string) {
+    if ( client instanceof Client ) {
+        client.user.setPresence({ game: { name: status }});
+    }
+}

@@ -18,7 +18,7 @@ class TalentTierCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[[\w\s]+\/\d{1,2}\]\]/ig;
+  pattern: RegExp = /\[\[[\w\s'\.]+\/\d{1,2}\]\]/ig;
   testMessage(message: Message): boolean {
     return this.pattern.test(message.cleanContent);
   }
