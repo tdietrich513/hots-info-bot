@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import { IWinRate } from "../interfaces";
 import HeroData from "../hero-data";
 import canUseEmbeds from "../can-use-embeds";
-import { renderWinRateBarChart } from "../responses";
+import { renderPopularityBarChart } from "../responses";
 
 class BansCommand extends Command {
   constructor() {
@@ -29,7 +29,7 @@ class BansCommand extends Command {
       .value();
 
     let response = "Top 10 Most Popular Bans in the last 7 days:";
-    response += renderWinRateBarChart(top10, (wr) => wr.banCount);
+    response += renderPopularityBarChart(top10, (wr) => wr.banCount);
     return message.channel.send(response);
   }
 
@@ -45,8 +45,8 @@ class BansCommand extends Command {
       .take(10)
       .value();
 
-    let response = `Top 10 Most Popular ${role} Bans in the last 7 days:`;
-    response += renderWinRateBarChart(top10, (wr) => wr.banCount);
+    let response = `Top 10 Most Popular ${_.startCase(role)} Bans in the last 7 days:`;
+    response += renderPopularityBarChart(top10, (wr) => wr.banCount);
     return message.channel.send(response);
   }
 

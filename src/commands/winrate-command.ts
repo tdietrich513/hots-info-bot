@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { IWinRate } from "../interfaces";
 import HeroData from "../hero-data";
 import canUseEmbeds from "../can-use-embeds";
+import { renderWinRateBarChart } from "../responses";
 
 class WinRateCommand extends Command {
   constructor() {
@@ -32,11 +33,7 @@ class WinRateCommand extends Command {
       .value();
 
     let response = "Top 10 Win Rates in the last 7 days:";
-    response += "\n```";
-    top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n${_.padStart((i + 1) + "", 2)}: ${_.padEnd(wr.hero, nameLength)} (${wr.winRate}%)`;
-    });
-    response += "\n```";
+    response += renderWinRateBarChart(top10);
 
     return message.channel.send(response);
   }
@@ -58,12 +55,8 @@ class WinRateCommand extends Command {
       .max()
       .value();
 
-    let response = `Top 10 ${role} WinRates in the last 7 days:`;
-    response += "\n```";
-    top10.forEach((wr: IWinRate, i: number) => {
-      response += `\n${_.padStart((i + 1) + "", 2)}: ${_.padEnd(wr.hero, nameLength)} (${wr.winRate}%)`;
-    });
-    response += "\n```";
+    let response = `Top 10 ${_.startCase(role)} WinRates in the last 7 days:`;
+    response += renderWinRateBarChart(top10);
 
     return message.channel.send(response);
   }
