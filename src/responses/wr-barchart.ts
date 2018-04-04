@@ -52,7 +52,7 @@ export function renderWinRateBarChart(winRates: Array<IWinRate>): string {
     const rank = _.padStart((i + 1) + "", 2);
     const name = _.padEnd(wr.hero, nameLength);
     const lessSection = (diffFrom50 > 0) ? _.repeat(" ", -minRate) : _.padStart(_.repeat("-", -diffFrom50), -minRate);
-    const moreSection = (diffFrom50 < 0) ? _.repeat(" ", maxRate) : _.padEnd(_.repeat("-", diffFrom50), maxRate);
+    const moreSection = (diffFrom50 < 0) ? _.repeat(" ", maxRate) : _.padEnd(_.repeat("+", diffFrom50), maxRate);
     const winRate = wr.winRate.toFixed(1);
     chart += `\n${rank}: ${name} (${winRate}%) ${lessSection}|${moreSection}`;
   });
