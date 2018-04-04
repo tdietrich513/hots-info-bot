@@ -2,8 +2,8 @@ import * as _ from "lodash";
 import { IWinRate } from "../interfaces";
 import HeroData from "../hero-data";
 
-function barLength(val: number, max: number): number {
-  return _.floor((val / max) * 10);
+function barLength(val: number, max: number, scale: number): number {
+  return _.floor((val / max) * scale);
 }
 export function renderPopularityBarChart(winRates: Array<IWinRate>, dataSelector: (wr: IWinRate) => number): string {
   let chart = "";
@@ -22,7 +22,7 @@ export function renderPopularityBarChart(winRates: Array<IWinRate>, dataSelector
   winRates.forEach((wr: IWinRate, i: number) => {
     const rank = _.padStart((i + 1) + "", 2);
     const name = _.padEnd(wr.hero, nameLength);
-    const bar = _.padEnd(_.repeat("#", barLength(dataSelector(wr), maxPicks)), 10);
+    const bar = _.padEnd(_.repeat("#", barLength(dataSelector(wr), maxPicks, 10)), 10);
     const absVal = _.padEnd(dataSelector(wr) + "", 6);
     const pctVal = _.round((dataSelector(wr) / HeroData.totalGames) * 100, 0);
     chart += `\n${rank}: ${name}  ${bar} ${absVal} (${pctVal}%)`;
@@ -45,16 +45,23 @@ export function renderWinRateBarChart(winRates: Array<IWinRate>): string {
    .value();
   const maxRate = _.round(_.max(wrOffsets));
   const minRate = _.round(_.min(wrOffsets));
+  const maxGames = _.chain(winRates)
+  .map((wr: IWinRate) => wr.games)
+  .max()
+  .value();
 
   chart += "\n```";
+  chart += `\n #: ${_.padEnd("Name", nameLength)} ${_.padEnd("Win Rate", 22)} Popularity`;
   winRates.forEach((wr: IWinRate, i: number) => {
     const diffFrom50 = _.round(wr.winRate - 50);
     const rank = _.padStart((i + 1) + "", 2);
     const name = _.padEnd(wr.hero, nameLength);
-    const lessSection = (diffFrom50 > 0) ? _.repeat(" ", -minRate) : _.padStart(_.repeat("-", -diffFrom50), -minRate);
-    const moreSection = (diffFrom50 < 0) ? _.repeat(" ", maxRate) : _.padEnd(_.repeat("+", diffFrom50), maxRate);
+    const lessSection =  _.padStart(_.repeat("-", Math.min(-diffFrom50, 5)), 5);
+    const moreSection =  _.padEnd(_.repeat("+", Math.min(diffFrom50, 10)), 10);
     const winRate = wr.winRate.toFixed(1);
-    chart += `\n${rank}: ${name} (${winRate}%) ${lessSection}|${moreSection}`;
+    const plusMinus = `${lessSection}|${moreSection}`;
+    const bar = _.padEnd(_.repeat("#", barLength(wr.games, maxGames, 10)), 10);
+    chart += `\n${rank}: ${name} ${winRate}% ${plusMinus} ${bar}`;
   });
   chart += "\n```";
 
