@@ -29,7 +29,7 @@ class BansCommand extends Command {
       .value();
 
     let response = "Top 10 Most Popular Picks in the last 7 days:";
-    response += renderPopularityBarChart(top10, (wr) => wr.games);
+    response += renderPopularityBarChart(top10, (wr) => wr.games, "Pick");
 
     return message.channel.send(response);
   }
@@ -47,7 +47,7 @@ class BansCommand extends Command {
       .value();
 
     let response = `Top 10 Most Popular ${_.startCase(role)} Picks in the last 7 days:`;
-    response += renderPopularityBarChart(top10, (wr) => wr.games);
+    response += renderPopularityBarChart(top10, (wr) => wr.games, "Pick");
 
     return message.channel.send(response);
   }
