@@ -119,6 +119,7 @@ export default class HeroData {
 
   private static processHero(hero: IHotsApiHero) {
     if (hero.name == "Lúcio") hero.name = "Lucio";
+    if (hero.name == "Varian") hero.role = "Warrior";
 
     const heroSummary: IHeroData = {
       name: hero.name,
