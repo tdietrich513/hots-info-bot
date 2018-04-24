@@ -12,7 +12,7 @@ import HeroData from "../hero-data";
 class HeroOverviewCommand extends Command {
   constructor() {
     super("hero", {
-      cooldown: 1000,
+      cooldown: 15000,
       ratelimit: 1,
     });
     super.condition = this.testMessage;
