@@ -24,15 +24,12 @@ class WinRateCommand extends Command {
 
   topWins(message: Message): any {
     const top10 = _.chain(HeroData.winrates)
+      .filter((wr: IWinRate) => (wr.games + wr.banCount) / HeroData.totalGames > .1)
       .sortBy((wr: IWinRate) => -wr.winRate)
       .take(10)
       .value();
-    const nameLength = _.chain(top10)
-      .map((wr: IWinRate) => wr.hero.length)
-      .max()
-      .value();
 
-    let response = "Top 10 Win Rates in the last 7 days:";
+    let response = "Top 10 Win Rates in the last 7 days (with >10% pick+ban rate):";
     response += renderWinRateBarChart(top10);
 
     return message.channel.send(response);
@@ -48,11 +45,6 @@ class WinRateCommand extends Command {
       .filter((wr: IWinRate) => roleHeroes.some(name => wr.hero.toLowerCase() == name))
       .sortBy((wr: IWinRate) => -wr.winRate)
       .take(10)
-      .value();
-
-    const nameLength = _.chain(top10)
-      .map((wr: IWinRate) => wr.hero.length)
-      .max()
       .value();
 
     let response = `Top 10 ${_.startCase(role)} WinRates in the last 7 days:`;
