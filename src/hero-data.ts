@@ -1,8 +1,23 @@
 import * as fs from "fs";
-import { ISkillData, IHeroData, ITalentData, ISkillsAndTalentsResult, IWinRate, IHotsApiHero, IHotsApiAbility, IHotsApiTalent } from "./interfaces";
-import { getWinRates } from "./get-winrates";
+import {
+  ISkillData,
+  IHeroData,
+  ITalentData,
+  ISkillsAndTalentsResult,
+  IWinRate,
+  IHotsApiHero,
+  IHotsApiAbility,
+  IHotsApiTalent
+} from "./interfaces";
+import {
+  getWinRates
+} from "./get-winrates";
 
 import fetch from "node-fetch";
+import {
+  IPatchNotesHero,
+  IPatchNotesAbility
+} from "./interfaces/IPatchNotesHero";
 
 export default class HeroData {
   static skills: ISkillData[] = [];
@@ -30,7 +45,10 @@ export default class HeroData {
   }
 
   static findSkillOrTalent(name: string): ISkillsAndTalentsResult {
-    const matches: ISkillsAndTalentsResult = { skills: [], talents: [] };
+    const matches: ISkillsAndTalentsResult = {
+      skills: [],
+      talents: []
+    };
     const nameLower = name.trim().toLowerCase();
 
     this.skills.forEach(skill => {
@@ -49,7 +67,10 @@ export default class HeroData {
   }
 
   static descriptionSearch(effect: string): ISkillsAndTalentsResult {
-    const matches: ISkillsAndTalentsResult = { skills: [], talents: [] };
+    const matches: ISkillsAndTalentsResult = {
+      skills: [],
+      talents: []
+    };
     const pattern = new RegExp(effect, "ig");
 
     this.skills.forEach(skill => {
@@ -79,14 +100,13 @@ export default class HeroData {
       const isStartsWithMatch = h.nameLower.startsWith(heroNameLower);
 
       return (isExactMatch || isWordMatch || isStartsWithMatch);
-    }
-    );
+    });
     if (!matchingHero) return [];
     return matchingHero.talents.get(tier) || [];
   }
 
-  private static readFiles(dirname: string, onFileContent: (f: string, c: string) => void, onError: (ex: any) => void): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  private static readFiles(dirname: string, onFileContent: (f: string, c: string) => void, onError: (ex: any) => void): Promise < boolean > {
+    return new Promise < boolean > ((resolve, reject) => {
       fs.readdir(dirname, (err, filenames) => {
         if (err) {
           onError(err);
@@ -108,7 +128,7 @@ export default class HeroData {
     });
   }
 
-  private static getSkillData(onHero: (hd: IHotsApiHero) => void): Promise<void> {
+  private static getSkillData(onHero: (hd: IHotsApiHero) => void): Promise < void > {
     const endpoint = "http://hotsapi.net/api/v1/heroes";
     return fetch(endpoint).then(response => {
       response.json().then((json: IHotsApiHero[]) => {
@@ -117,78 +137,89 @@ export default class HeroData {
     }, console.error);
   }
 
-  private static processHero(hero: IHotsApiHero) {
-    if (hero.name == "Lúcio") hero.name = "Lucio";
-    if (hero.name == "Varian") hero.role = "Warrior";
+  private static processHero(apiHero: IHotsApiHero) {
+    if (apiHero.name == "Lúcio") apiHero.name = "Lucio";
+    if (apiHero.name == "Varian") apiHero.role = "Warrior";
 
     const heroSummary: IHeroData = {
-      name: hero.name,
-      nameLower: hero.name.toLowerCase(),
-      role: hero.role,
-      type: hero.type,
-      talents: new Map<string, ITalentData[]>(),
+      name: apiHero.name,
+      nameLower: apiHero.name.toLowerCase(),
+      role: apiHero.role,
+      type: apiHero.type,
+      talents: new Map < string,
+      ITalentData[] > (),
       skills: []
     };
-
     if (!HeroData.heroNames.some(n => n == heroSummary.nameLower)) HeroData.heroNames.push(heroSummary.nameLower);
 
-    hero.abilities.forEach((skill: IHotsApiAbility) => {
-      const stateName = skill.owner.replace(hero.name, "");
-      let hotkey = skill.hotkey;
-      if (!hotkey && skill.trait) hotkey = "Trait";
+    const heroTalentDataRepo = "https://github.com/heroespatchnotes/heroes-talents/raw/master/hero/";
+    const fileName = `${apiHero.name.toLowerCase().replace(/[\.\-\'\s]/g, "")}.json`;
+    fetch(`${heroTalentDataRepo}${fileName}`).then(response => {
+      response.json().then((hero: IPatchNotesHero) => {
 
-      const skillSummary: ISkillData = {
-        nameLower: skill.title.toLowerCase(),
-        name: skill.title,
-        hero: hero.name,
-        hotkey: hotkey,
-        cooldown: skill.cooldown,
-        manaCost: skill.mana_cost,
-        description: skill.description,
-        state: stateName
-      };
-      heroSummary.skills.push(skillSummary);
-      const existingSkillIndex = HeroData.skills.findIndex(s => s.name == skillSummary.name && s.hero == skillSummary.hero);
-      if (existingSkillIndex >= 0) {
-        HeroData.skills[existingSkillIndex] = skillSummary;
-      } else {
-        HeroData.skills.push(skillSummary);
-      }
-    });
+        for (const stance in hero.abilities) {
+          hero.abilities[stance].forEach(skill => {
+            const stateName = stance.replace(hero.name, "");
+            let hotkey = skill.hotkey;
+            if (!hotkey && skill.trait) hotkey = "Trait";
 
-    hero.talents.forEach(talent => {
-      const talentSummary: ITalentData = {
-        nameLower: talent.title.toLowerCase(),
-        name: talent.title,
-        hero: hero.name,
-        tier: talent.level.toString(),
-        description: talent.description
-      };
+            const skillSummary: ISkillData = {
+              nameLower: skill.name.toLowerCase(),
+              name: skill.name,
+              hero: hero.name,
+              hotkey: hotkey,
+              cooldown: skill.cooldown,
+              manaCost: +skill.manaCost,
+              description: skill.description,
+              state: stateName
+            };
+            heroSummary.skills.push(skillSummary);
+            const existingSkillIndex = HeroData.skills.findIndex(s => s.name == skillSummary.name && s.hero == skillSummary.hero);
+            if (existingSkillIndex >= 0) {
+              HeroData.skills[existingSkillIndex] = skillSummary;
+            } else {
+              HeroData.skills.push(skillSummary);
+            }
+          });
+        }
 
-      if (!heroSummary.talents.has(talentSummary.tier)) {
-        heroSummary.talents.set(talentSummary.tier, [talentSummary]);
-      } else {
-        heroSummary.talents.get(talentSummary.tier).push(talentSummary);
-      }
+        for (const tier in hero.talents) {
+          hero.talents[tier].forEach(talent => {
+            const talentSummary: ITalentData = {
+              nameLower: talent.name.toLowerCase(),
+              name: talent.name,
+              hero: hero.name,
+              tier: tier.toString(),
+              description: talent.description
+            };
 
-      const existingTalentIndex = HeroData.talents.findIndex(t => t.name == talentSummary.name && t.hero == talentSummary.hero);
-      if (existingTalentIndex >= 0) {
-        HeroData.talents[existingTalentIndex] = talentSummary;
-      } else {
-        HeroData.talents.push(talentSummary);
-      }
-    });
+            if (!heroSummary.talents.has(talentSummary.tier)) {
+              heroSummary.talents.set(talentSummary.tier, [talentSummary]);
+            } else {
+              heroSummary.talents.get(talentSummary.tier).push(talentSummary);
+            }
 
-    const existingHeroIndex = HeroData.heroes.findIndex(h => h.name == heroSummary.name);
-    if (existingHeroIndex >= 0) {
-      HeroData.heroes[existingHeroIndex] = heroSummary;
-    } else {
-      HeroData.heroes.push(heroSummary);
-      HeroData.heroes.sort((a, b) => {
-        if (a.nameLower < b.nameLower) return -1;
-        if (a.nameLower > b.nameLower) return 1;
-        return 0;
+            const existingTalentIndex = HeroData.talents.findIndex(t => t.name == talentSummary.name && t.hero == talentSummary.hero);
+            if (existingTalentIndex >= 0) {
+              HeroData.talents[existingTalentIndex] = talentSummary;
+            } else {
+              HeroData.talents.push(talentSummary);
+            }
+          });
+
+          const existingHeroIndex = HeroData.heroes.findIndex(h => h.name == heroSummary.name);
+          if (existingHeroIndex >= 0) {
+            HeroData.heroes[existingHeroIndex] = heroSummary;
+          } else {
+            HeroData.heroes.push(heroSummary);
+            HeroData.heroes.sort((a, b) => {
+              if (a.nameLower < b.nameLower) return -1;
+              if (a.nameLower > b.nameLower) return 1;
+              return 0;
+            });
+          }
+        }
       });
-    }
+    });
   }
 }
