@@ -4,8 +4,9 @@ import { SkillFormatter } from "../skill-formatter";
 import * as _ from "lodash";
 
 export function outputHeroOverview(search: string, message: Message, useEmbeds: boolean) {
-  const hero = HeroData.heroes.find(h => h.nameLower == search.toLowerCase());
-  const winRates = HeroData.winrates.find(h => h.hero.toLowerCase() == search.toLowerCase());
+    const searchHero = HeroData.makeSearchableName(search);
+  const hero = HeroData.heroes.find(h => h.nameLower == searchHero);
+  const winRates = HeroData.winrates.find(h => HeroData.makeSearchableName(h.hero) == searchHero);
   if (useEmbeds) {
       const embed = new RichEmbed().setColor(0x00AE86);
       embed.setTitle(`${hero.name} Skills Overview:`);

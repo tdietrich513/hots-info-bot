@@ -31,7 +31,8 @@ class HeroOverviewCommand extends Command {
 
   heroSearches(searches: string[]): string[] {
     return searches.filter(hero => {
-      return HeroData.heroNames.some(hn => hn == hero.toLowerCase());
+      const searchHero = HeroData.makeSearchableName(hero);
+      return HeroData.heroNames.some(hn => hn == searchHero);
     });
   }
 

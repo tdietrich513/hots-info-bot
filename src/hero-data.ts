@@ -49,7 +49,7 @@ export default class HeroData {
       skills: [],
       talents: []
     };
-    const nameLower = name.trim().toLowerCase();
+    const nameLower = HeroData.makeSearchableName(name);
 
     this.skills.forEach(skill => {
       if (skill.nameLower.includes(nameLower)) {
@@ -89,7 +89,7 @@ export default class HeroData {
   }
 
   static findHeroTalentTier(heroName: string, tier: string): ITalentData[] {
-    const heroNameLower = heroName.toLowerCase();
+    const heroNameLower = HeroData.makeSearchableName(heroName);
     const matchingHero = this.heroes.find(h => {
       const isExactMatch = h.nameLower == heroNameLower;
 
@@ -137,13 +137,18 @@ export default class HeroData {
     }, console.error);
   }
 
+  static makeSearchableName(name: string): string {
+    const badChars = /[^a-z0-9]/ig;
+    return name.replace(badChars, "").toLowerCase();
+  }
+
   private static processHero(apiHero: IHotsApiHero) {
     if (apiHero.name == "Lúcio") apiHero.name = "Lucio";
     if (apiHero.name == "Varian") apiHero.role = "Warrior";
 
     const heroSummary: IHeroData = {
       name: apiHero.name,
-      nameLower: apiHero.name.toLowerCase(),
+      nameLower: HeroData.makeSearchableName(apiHero.name),
       role: apiHero.role,
       type: apiHero.type,
       talents: new Map < string,
@@ -164,7 +169,7 @@ export default class HeroData {
             if (!hotkey && skill.trait) hotkey = "Trait";
 
             const skillSummary: ISkillData = {
-              nameLower: skill.name.toLowerCase(),
+              nameLower: HeroData.makeSearchableName(skill.name),
               name: skill.name,
               hero: hero.name,
               hotkey: hotkey,
@@ -186,7 +191,7 @@ export default class HeroData {
         for (const tier in hero.talents) {
           hero.talents[tier].forEach(talent => {
             const talentSummary: ITalentData = {
-              nameLower: talent.name.toLowerCase(),
+              nameLower: HeroData.makeSearchableName(talent.name),
               name: talent.name,
               hero: hero.name,
               tier: tier.toString(),

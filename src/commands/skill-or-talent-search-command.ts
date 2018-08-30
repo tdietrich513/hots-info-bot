@@ -16,7 +16,7 @@ class SkillOrTalentSearchCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[[\w\s\-\:]+?\]\]/ig;
+  pattern: RegExp = /\[\[[\w\s\-\'\:]+?\]\]/ig;
   testMessage(message: Message): boolean {
     if (!this.pattern.test(message.cleanContent)) {
       return false;
@@ -29,7 +29,8 @@ class SkillOrTalentSearchCommand extends Command {
 
   nonHeroSearches(searches: string[]): string[] {
     return searches.filter(hero => {
-      return !HeroData.heroNames.some(hn => hn == hero.toLowerCase());
+      const searchHero = HeroData.makeSearchableName(hero);
+      return !HeroData.heroNames.some(hn => hn == searchHero);
     });
   }
 
