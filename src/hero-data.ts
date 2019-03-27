@@ -144,7 +144,7 @@ export default class HeroData {
 
   private static processHero(apiHero: IHotsApiHero) {
     if (apiHero.name == "Lúcio") apiHero.name = "Lucio";
-    if (apiHero.name == "Varian") apiHero.role = "Warrior";    
+    if (apiHero.name == "Varian") apiHero.role = "Warrior";
 
     const heroSummary: IHeroData = {
       name: apiHero.name,
@@ -160,7 +160,7 @@ export default class HeroData {
     const heroTalentDataRepo = "https://github.com/heroespatchnotes/heroes-talents/raw/master/hero/";
     let fileName = `${apiHero.name.toLowerCase().replace(/[\.\-\'\s]/g, "")}.json`;
     if (apiHero.name == "The Lost Vikings") fileName = "lostvikings.json";
-    
+
     fetch(`${heroTalentDataRepo}${fileName}`).then(response => {
       response.json().then((hero: IPatchNotesHero) => {
 
