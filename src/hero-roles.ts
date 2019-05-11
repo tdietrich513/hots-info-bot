@@ -24,7 +24,7 @@ export class HeroRoles {
 
       HeroData.heroes.forEach(h => {
         console.log(`hero: ${h.name} - ${h.role}`);
-      })
+      });
     }
 
     return HeroRoles.roles;
