@@ -12,7 +12,7 @@ export class HeroRoles {
       roleLower = roleLower + " assassin";
     }
 
-    const roleHeroes = _.chain(HeroData.heroes)
+    return _.chain(HeroData.heroes)
       .filter(hd => hd.role.toLowerCase() == roleLower)
       .map(hd => hd.name.toLowerCase())
       .value();
