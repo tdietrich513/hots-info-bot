@@ -3,11 +3,11 @@ import * as _ from "lodash";
 
 
 export class HeroRoles {
-  static roles: string[]
+  static roles: string[];
 
   public getHeroesByRole(role: string): string[] {
-    let roleLower = role.toLowerCase()
-    
+    let roleLower = role.toLowerCase();
+
     if (roleLower == "melee" || roleLower == "ranged") {
       roleLower = roleLower + " assassin";
     }
@@ -25,4 +25,4 @@ export class HeroRoles {
 
     return HeroRoles.roles;
   }
-} 
+}
