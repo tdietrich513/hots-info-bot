@@ -1,4 +1,5 @@
 export interface IHotsApiHero {
+  expandedRole: string;
   name: string;
   shortName: string;
   attribute_id: string;

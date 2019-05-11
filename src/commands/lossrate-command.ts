@@ -6,6 +6,7 @@ import { IWinRate } from "../interfaces";
 import HeroData from "../hero-data";
 import canUseEmbeds from "../can-use-embeds";
 import { renderWinRateBarChart } from "../responses";
+import { HeroRoles } from "../hero-roles";
 
 class LossRateCommand extends Command {
   constructor() {
@@ -16,7 +17,7 @@ class LossRateCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[(lossrate|lr|losses|loss)\/(all|warrior|support|specialist|assassin)\]\]/i;
+  pattern: RegExp = /\[\[(lossrate|lr|losses|loss)\/(all|[a-z\s]+)\]\]/i;
 
   testMessage(message: Message): boolean {
     return this.pattern.test(message.cleanContent);
@@ -36,10 +37,7 @@ class LossRateCommand extends Command {
   }
 
   topWinsByRole(message: Message, role: string): any {
-    const roleHeroes = _.chain(HeroData.heroes)
-      .filter(hd => hd.role.toLowerCase() == role.toLowerCase())
-      .map(hd => hd.name.toLowerCase())
-      .value();
+    const roleHeroes = new HeroRoles().getHeroesByRole(role);
 
     const top10 = _.chain(HeroData.winrates)
       .filter((wr: IWinRate) => roleHeroes.some(name => wr.hero.toLowerCase() == name))

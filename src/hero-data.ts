@@ -144,12 +144,11 @@ export default class HeroData {
 
   private static processHero(apiHero: IHotsApiHero) {
     if (apiHero.name == "Lúcio") apiHero.name = "Lucio";
-    if (apiHero.name == "Varian") apiHero.role = "Warrior";
 
     const heroSummary: IHeroData = {
       name: apiHero.name,
       nameLower: HeroData.makeSearchableName(apiHero.name),
-      role: apiHero.role,
+      role: apiHero.expandedRole,
       type: apiHero.type,
       talents: new Map < string,
       ITalentData[] > (),
