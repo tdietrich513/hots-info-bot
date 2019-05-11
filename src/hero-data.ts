@@ -148,8 +148,8 @@ export default class HeroData {
     const heroSummary: IHeroData = {
       name: apiHero.name,
       nameLower: HeroData.makeSearchableName(apiHero.name),
-      role: apiHero.expandedRole,
       type: apiHero.type,
+      role: "",
       talents: new Map < string,
       ITalentData[] > (),
       skills: []
@@ -163,6 +163,7 @@ export default class HeroData {
 
     fetch(`${heroTalentDataRepo}${fileName}`).then(response => {
       response.json().then((hero: IPatchNotesHero) => {
+        heroSummary.role = hero.expandedRole;
 
         for (const stance in hero.abilities) {
           hero.abilities[stance].forEach(skill => {

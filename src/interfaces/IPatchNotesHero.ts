@@ -1,4 +1,5 @@
 export interface IPatchNotesHero {
+  expandedRole: string;
   id: string;
   shortName: string;
   attributeId: string;
