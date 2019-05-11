@@ -159,6 +159,7 @@ export default class HeroData {
     const heroTalentDataRepo = "https://github.com/heroespatchnotes/heroes-talents/raw/master/hero/";
     let fileName = `${apiHero.name.toLowerCase().replace(/[\.\-\'\s]/g, "")}.json`;
     if (apiHero.name == "The Lost Vikings") fileName = "lostvikings.json";
+    if (apiHero.name == "Cho") fileName = "chogall.json";
 
     fetch(`${heroTalentDataRepo}${fileName}`).then(response => {
       response.json().then((hero: IPatchNotesHero) => {
