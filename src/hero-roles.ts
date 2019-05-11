@@ -14,13 +14,17 @@ export class HeroRoles {
 
     return _.chain(HeroData.heroes)
       .filter(hd => hd.role.toLowerCase() == roleLower)
-      .map(hd => hd.name.toLowerCase())
+      .map(hd => hd.nameLower)
       .value();
   }
 
   public getRoles(): string[] {
     if (HeroRoles.roles == []) {
       HeroRoles.roles = HeroData.heroes.map(h => h.role);
+
+      HeroData.heroes.forEach(h => {
+        console.log(`hero: ${h.name} - ${h.role}`);
+      })
     }
 
     return HeroRoles.roles;
