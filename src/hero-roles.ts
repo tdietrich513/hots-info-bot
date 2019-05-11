@@ -13,7 +13,13 @@ export class HeroRoles {
     }
 
     return _.chain(HeroData.heroes)
-      .filter(hd => hd.role.toLowerCase() == roleLower)
+      .filter(hd => {
+        if (!hd.role) {
+          console.log(`No role found for ${hd.name}`);
+          return false;
+        }
+        return hd.role.toLowerCase() == roleLower;
+      })
       .map(hd => hd.nameLower)
       .value();
   }
