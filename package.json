@@ -21,7 +21,7 @@
     "discord-akairo": "^7.5.4",
     "discord.js": "^11.3.2",
     "dotenv": "^5.0.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "node-fetch": "^2.1.2",
     "node-schedule": "^1.3.0",
     "tabletojson": "^1.0.4",
