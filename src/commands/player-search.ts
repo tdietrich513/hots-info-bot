@@ -71,6 +71,7 @@ class PlayerSearch extends Command {
                 const hl = result.LeaderboardRankings.find(r => r.GameMode === "HeroLeague");
                 const ud = result.LeaderboardRankings.find(r => r.GameMode === "UnrankedDraft");
                 const tl = result.LeaderboardRankings.find(r => r.GameMode === "TeamLeague");
+                const sl = result.LeaderboardRankings.find(r => r.GameMode === "StormLeague");
 
                 if (!canUseEmbeds(message)) {
                     let response = `Current *HotsLogs MMR* for ${matches[1]}/${name}#${tagNum}:\n`;
@@ -78,6 +79,7 @@ class PlayerSearch extends Command {
                     if (hl && hl.CurrentMMR && this.leagueMap[hl.LeagueID]) response += `\tHero League: ${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_\n`;
                     if (ud && ud.CurrentMMR && this.leagueMap[ud.LeagueID]) response += `\tUnranked Draft: ${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_\n`;
                     if (tl && tl.CurrentMMR && this.leagueMap[tl.LeagueID]) response += `\tTeam League: ${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_\n`;
+                    if (sl && sl.CurrentMMR && this.leagueMap[sl.LeagueID]) response += `\tStorm League: ${sl.CurrentMMR} _(${this.leagueMap[sl.LeagueID]})_\n`;
                     message.channel.send(response)
                         .catch(console.error);
                 } else {
@@ -88,6 +90,7 @@ class PlayerSearch extends Command {
                     if (hl && hl.CurrentMMR && this.leagueMap[hl.LeagueID]) embed.addField("Hero League", `${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_`);
                     if (ud && ud.CurrentMMR && this.leagueMap[ud.LeagueID]) embed.addField("Unranked Draft", `${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_`);
                     if (tl && tl.CurrentMMR && this.leagueMap[tl.LeagueID]) embed.addField("Team League", `${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_`);
+                    if (sl && sl.CurrentMMR && this.leagueMap[sl.LeagueID]) embed.addField("Storm League", `${sl.CurrentMMR} _(${this.leagueMap[sl.LeagueID]})_`);
                     message.channel.send({ embed })
                         .catch(console.error);
                 }

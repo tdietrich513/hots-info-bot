@@ -144,7 +144,6 @@ export default class HeroData {
 
   private static processHero(apiHero: IHotsApiHero) {
     if (apiHero.name == "Lúcio") apiHero.name = "Lucio";
-    if (apiHero.name == "Varian") apiHero.role = "Warrior";
     if (apiHero.name == "Cho") return;
     if (apiHero.name == "Gall") return;
     if (apiHero.name == "The Lost Vikings") apiHero.name = "Lost Vikings";
@@ -152,8 +151,8 @@ export default class HeroData {
     const heroSummary: IHeroData = {
       name: apiHero.name,
       nameLower: HeroData.makeSearchableName(apiHero.name),
-      role: apiHero.role,
       type: apiHero.type,
+      role: "",
       talents: new Map < string,
       ITalentData[] > (),
       skills: []
@@ -161,9 +160,13 @@ export default class HeroData {
     if (!HeroData.heroNames.some(n => n == heroSummary.nameLower)) HeroData.heroNames.push(heroSummary.nameLower);
 
     const heroTalentDataRepo = "https://github.com/heroespatchnotes/heroes-talents/raw/master/hero/";
-    const fileName = `${apiHero.name.toLowerCase().replace(/[\.\-\'\s]/g, "")}.json`;
+    let fileName = `${apiHero.name.toLowerCase().replace(/[\.\-\'\s]/g, "")}.json`;
+    if (apiHero.name == "The Lost Vikings") fileName = "lostvikings.json";
+    if (apiHero.name == "Cho") fileName = "chogall.json";
+
     fetch(`${heroTalentDataRepo}${fileName}`).then(response => {
       response.json().then((hero: IPatchNotesHero) => {
+        heroSummary.role = hero.expandedRole;
 
         for (const stance in hero.abilities) {
           hero.abilities[stance].forEach(skill => {

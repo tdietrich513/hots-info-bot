@@ -6,6 +6,7 @@ import { IWinRate } from "../interfaces";
 import HeroData from "../hero-data";
 import canUseEmbeds from "../can-use-embeds";
 import { renderPopularityBarChart } from "../responses";
+import { HeroRoles } from "../hero-roles";
 
 class BansCommand extends Command {
   constructor() {
@@ -16,7 +17,7 @@ class BansCommand extends Command {
     super.condition = this.testMessage;
   }
 
-  pattern: RegExp = /\[\[(picks|pick)\/(all|warrior|support|specialist|assassin)\]\]/i;
+  pattern: RegExp = /\[\[(picks|pick)\/(all|[a-z\s]+)\]\]/i;
 
   testMessage(message: Message): boolean {
     return this.pattern.test(message.cleanContent);
@@ -35,10 +36,7 @@ class BansCommand extends Command {
   }
 
   topPicksByRole(message: Message, role: string): any {
-    const roleHeroes = _.chain(HeroData.heroes)
-      .filter(hd => hd.role.toLowerCase() == role.toLowerCase())
-      .map(hd => hd.name.toLowerCase())
-      .value();
+    const roleHeroes = new HeroRoles().getHeroesByRole(role);
 
     const top10 = _.chain(HeroData.winrates)
       .filter((wr: IWinRate) => roleHeroes.some(name => wr.hero.toLowerCase() == name))
