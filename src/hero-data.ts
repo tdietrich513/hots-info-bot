@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { exec, ChildProcess } from "child_process";
 import {
   ISkillData,
   IHeroData,
@@ -19,6 +20,16 @@ import {
   IPatchNotesAbility
 } from "./interfaces/IPatchNotesHero";
 
+import { convert } from "tabletojson";
+import * as _ from "lodash";
+
+interface IRawRow {
+    Type: string;
+    Name: string;
+    "Latest Commit Message": string;
+    "Commit Time": string;
+}
+
 export default class HeroData {
   static skills: ISkillData[] = [];
   static talents: ITalentData[] = [];
@@ -28,9 +39,7 @@ export default class HeroData {
   static totalGames: number = 0;
 
   static loadData(): void {
-    this.getSkillData(this.processHero).then(() => {
-      console.info(`Heroes updating`);
-    });
+    this.getSkillData(this.processHero);
   }
 
   static refreshWinRate(): void {
@@ -128,13 +137,22 @@ export default class HeroData {
     });
   }
 
-  private static getSkillData(onHero: (hd: IHotsApiHero) => void): Promise < void > {
-    const endpoint = "http://hotsapi.net/api/v1/heroes";
-    return fetch(endpoint).then(response => {
-      response.json().then((json: IHotsApiHero[]) => {
-        json.forEach(onHero);
-      }, console.error);
-    }, console.error);
+
+
+  private static getSkillData(onHero: (hd: string) => void) {
+    const program: ChildProcess = exec(`${process.env.PHANTOMJS_BIN || "phantomjs"} ./scrape-hero-list.js`);
+    let body = "";
+    program.stderr.pipe(process.stderr);
+    program.stdout.on("data", data => {
+      body += data;
+    });
+    program.on("exit", () => {
+      const rawTable = convert(body)[0];
+      const table: string[] = _.map(rawTable, (row: IRawRow): string => {
+        return row.Name;
+      });
+      table.forEach(onHero);
+    });
   }
 
   static makeSearchableName(name: string): string {
@@ -142,28 +160,30 @@ export default class HeroData {
     return name.replace(badChars, "").toLowerCase();
   }
 
-  private static processHero(apiHero: IHotsApiHero) {
-    if (apiHero.name == "Lúcio") apiHero.name = "Lucio";
+  private static processHero(apiHero: string) {
+    const pattern: RegExp = /\.json/i;
+    if (!pattern.test(apiHero)) return;
 
     const heroSummary: IHeroData = {
-      name: apiHero.name,
-      nameLower: HeroData.makeSearchableName(apiHero.name),
-      type: apiHero.type,
+      name: "",
+      nameLower: "",
+      type: "",
       role: "",
       talents: new Map < string,
       ITalentData[] > (),
       skills: []
     };
-    if (!HeroData.heroNames.some(n => n == heroSummary.nameLower)) HeroData.heroNames.push(heroSummary.nameLower);
 
     const heroTalentDataRepo = "https://github.com/heroespatchnotes/heroes-talents/raw/master/hero/";
-    let fileName = `${apiHero.name.toLowerCase().replace(/[\.\-\'\s]/g, "")}.json`;
-    if (apiHero.name == "The Lost Vikings") fileName = "lostvikings.json";
-    if (apiHero.name == "Cho") fileName = "chogall.json";
 
-    fetch(`${heroTalentDataRepo}${fileName}`).then(response => {
+
+    fetch(`${heroTalentDataRepo}${apiHero}`).then(response => {
       response.json().then((hero: IPatchNotesHero) => {
+        heroSummary.name = hero.name;
+        heroSummary.nameLower = HeroData.makeSearchableName(hero.name);
+        if (!HeroData.heroNames.some(n => n == heroSummary.nameLower)) HeroData.heroNames.push(heroSummary.nameLower);
         heroSummary.role = hero.expandedRole;
+        heroSummary.type = hero.type;
 
         for (const stance in hero.abilities) {
           hero.abilities[stance].forEach(skill => {

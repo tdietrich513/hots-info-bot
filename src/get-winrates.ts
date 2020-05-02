@@ -18,7 +18,7 @@ export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
   program.stdout.on("data", data => {
     body += data;
   });
-  program.stdout.on("end", () => {
+  program.on("exit", () => {
     const rawTable = convert(body)[2];
     const table: IWinRate[] = _.map(rawTable, (row: IRawRow): IWinRate => {
       if (row.Hero == "Lúcio") row.Hero = "Lucio";

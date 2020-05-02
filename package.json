@@ -13,6 +13,7 @@
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "build-ts": "tsc",
     "serve": "npm run build-ts && node -r dotenv/config dist/hots-info-bot.js",
+    "debug": "npm run build-ts && node -r dotenv/config --inspect dist/hots-info-bot.js",
     "clean": "ts-node cleanUp.ts"
   },
   "author": "Tom Dietrich",
