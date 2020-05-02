@@ -76,18 +76,24 @@ export default class HeroData {
   }
 
   static getSkillByHotkey(hero: string, hotkey: string): ISkillsAndTalentsResult {
-    const heroName = HeroData.makeSearchableName(hero);
     const matches: ISkillsAndTalentsResult = {
       skills: [],
       talents: []
     };
+    const heroNameLower = HeroData.makeSearchableName(hero);
+    const matchingHero = this.heroes.find(h => {
+      const isExactMatch = h.nameLower == heroNameLower;
 
-    this.skills.forEach(skill => {
-      if (skill.hero.toLowerCase() === heroName && skill.hotkey === hotkey.toUpperCase()) {
-        matches.skills.push(skill);
-      }
+      const isWordMatch = h.nameLower
+        .split(" ")
+        .some(word => word.startsWith(heroNameLower));
+
+      const isStartsWithMatch = h.nameLower.startsWith(heroNameLower);
+
+      return (isExactMatch || isWordMatch || isStartsWithMatch);
     });
-
+    if (!matchingHero) return matches;
+    matches.skills.push(... matchingHero.skills.filter(s => s.hotkey === hotkey.toUpperCase()));
     return matches;
   }
 
