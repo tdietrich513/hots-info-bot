@@ -15,6 +15,7 @@ class HelpCommand extends Command {
     let help = "I can search for heroes, skills and talents by name or description, and talent tiers\n";
     help += "I trigger when I see double square brackets (`[[]]`) in a message, and search on the value within the brackets.\n";
     help += "To search for a hero, search with the hero's exact name, ie: `[[Sgt. Hammer]]`\n";
+    help += "To search for a hero's skill by hotkey, search with the hero's exact name, with /key, ie: `[[Deathwing/q]]`";
     help += "To search for a hero's talent tier, search with the hero's name (or part of it), with /tier, ie: `[[Murk/13]]`\n";
     help += "To search for skills or talents across all heroes, just search for the name or part of the name, ie: `[[haunting wave]]`\n";
     help += "To search for skills or talents by key words in the description, prefix with a ?, ie: `[[?chill]]`\n";

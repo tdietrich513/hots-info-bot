@@ -75,6 +75,22 @@ export default class HeroData {
     return matches;
   }
 
+  static getSkillByHotkey(hero: string, hotkey: string): ISkillsAndTalentsResult {
+    const heroName = HeroData.makeSearchableName(hero);
+    const matches: ISkillsAndTalentsResult = {
+      skills: [],
+      talents: []
+    };
+
+    this.skills.forEach(skill => {
+      if (skill.hero.toLowerCase() === heroName && skill.hotkey === hotkey.toUpperCase()) {
+        matches.skills.push(skill);
+      }
+    });
+
+    return matches;
+  }
+
   static descriptionSearch(effect: string): ISkillsAndTalentsResult {
     const matches: ISkillsAndTalentsResult = {
       skills: [],
