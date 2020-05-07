@@ -47,7 +47,7 @@ class PlayerSearch extends Command {
         const name = matches[2];
         const tagNum = matches[3];
         const formattedPlayerName = `${region}/${name}_${tagNum}`;
-        const requestUri = `https://api.hotslogs.com/Public/Players/${formattedPlayerName}`;
+        const requestUri = `https://www.hotslogs.com/api/Players/${formattedPlayerName}`;
 
         https.get(requestUri, (res => {
             res.setEncoding("utf8");
