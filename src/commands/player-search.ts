@@ -40,12 +40,10 @@ class PlayerSearch extends Command {
     }
 
     public exec(message: Message): any {
-        const matches = message.cleanContent.match(this.pattern);
+        const [matches, rawRegion, name, tagNum] = message.cleanContent.match(this.pattern);
+        const region = this.regionMap[rawRegion.toLowerCase()];
 
-        const region = this.regionMap[matches[1].toLowerCase()];
         if (!region || region == undefined) return message.reply(`I haven't heard of a '${matches[1]}' region, sorry.`);
-        const name = matches[2];
-        const tagNum = matches[3];
         const formattedPlayerName = `${region}/${name}_${tagNum}`;
         const requestUri = `https://www.hotslogs.com/api/Players/${formattedPlayerName}`;
 
@@ -60,7 +58,7 @@ class PlayerSearch extends Command {
             });
             res.on("end", () => {
                 if (!body || body === "null") {
-                    return message.reply(`Couldn't find stats for ${matches[1]}/${name}#${tagNum} on hotslogs, sorry.`);
+                    return message.reply(`Couldn't find stats for ${rawRegion}/${name}#${tagNum} on hotslogs, sorry.`);
                 }
                 const result = JSON.parse(body);
                 if (!result || !result.LeaderboardRankings) {
@@ -74,23 +72,23 @@ class PlayerSearch extends Command {
                 const sl = result.LeaderboardRankings.find(r => r.GameMode === "StormLeague");
 
                 if (!canUseEmbeds(message)) {
-                    let response = `Current *HotsLogs MMR* for ${matches[1]}/${name}#${tagNum}:\n`;
-                    if (qm && qm.CurrentMMR && this.leagueMap[qm.LeagueID]) response += `\tQuick Match: ${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_\n`;
-                    if (hl && hl.CurrentMMR && this.leagueMap[hl.LeagueID]) response += `\tHero League: ${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_\n`;
-                    if (ud && ud.CurrentMMR && this.leagueMap[ud.LeagueID]) response += `\tUnranked Draft: ${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_\n`;
-                    if (tl && tl.CurrentMMR && this.leagueMap[tl.LeagueID]) response += `\tTeam League: ${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_\n`;
-                    if (sl && sl.CurrentMMR && this.leagueMap[sl.LeagueID]) response += `\tStorm League: ${sl.CurrentMMR} _(${this.leagueMap[sl.LeagueID]})_\n`;
+                    let response = `Current *HotsLogs MMR* for ${rawRegion}/${name}#${tagNum}:\n`;
+                    if (qm && qm.CurrentMMR) response += `\tQuick Match: ${qm.CurrentMMR} ${qm.LeagueId ? "_(" + this.leagueMap[qm.LeagueID] + ")_" : "" }\n`;
+                    if (hl && hl.CurrentMMR) response += `\tHero League: ${hl.CurrentMMR} ${hl.LeagueId ? "_(" + this.leagueMap[hl.LeagueID] + ")_" : "" }\n`;
+                    if (ud && ud.CurrentMMR) response += `\tUnranked Draft: ${ud.CurrentMMR} ${ud.LeagueId ? "_(" + this.leagueMap[ud.LeagueID] + ")_" : "" }\n`;
+                    if (tl && tl.CurrentMMR) response += `\tTeam League: ${tl.CurrentMMR} ${tl.LeagueId ? "_(" + this.leagueMap[tl.LeagueID] + ")_" : "" }\n`;
+                    if (sl && sl.CurrentMMR) response += `\tStorm League: ${sl.CurrentMMR} ${sl.LeagueId ? "_(" + this.leagueMap[sl.LeagueID] + ")_" : "" }\n`;
                     message.channel.send(response)
                         .catch(console.error);
                 } else {
                     const embed = new RichEmbed().setColor(0x00AE86);
                     embed.setTitle(`Current MMR for ${matches[1]}/${name}#${tagNum}:`);
                     embed.setDescription(`Sourced from [Hotslogs.com](https://www.hotslogs.com/Player/Profile?PlayerId=${playerId})`);
-                    if (qm && qm.CurrentMMR && this.leagueMap[qm.LeagueID]) embed.addField("Quick Match", `${qm.CurrentMMR} _(${this.leagueMap[qm.LeagueID]})_`);
-                    if (hl && hl.CurrentMMR && this.leagueMap[hl.LeagueID]) embed.addField("Hero League", `${hl.CurrentMMR} _(${this.leagueMap[hl.LeagueID]})_`);
-                    if (ud && ud.CurrentMMR && this.leagueMap[ud.LeagueID]) embed.addField("Unranked Draft", `${ud.CurrentMMR} _(${this.leagueMap[ud.LeagueID]})_`);
-                    if (tl && tl.CurrentMMR && this.leagueMap[tl.LeagueID]) embed.addField("Team League", `${tl.CurrentMMR} _(${this.leagueMap[tl.LeagueID]})_`);
-                    if (sl && sl.CurrentMMR && this.leagueMap[sl.LeagueID]) embed.addField("Storm League", `${sl.CurrentMMR} _(${this.leagueMap[sl.LeagueID]})_`);
+                    if (qm && qm.CurrentMMR) embed.addField("Quick Match", `${qm.CurrentMMR} ${qm.LeagueId ? "_(" + this.leagueMap[qm.LeagueID] + ")_" : "" }`);
+                    if (hl && hl.CurrentMMR) embed.addField("Hero League", `${hl.CurrentMMR} ${hl.LeagueId ? "_(" + this.leagueMap[hl.LeagueID] + ")_" : "" }`);
+                    if (ud && ud.CurrentMMR) embed.addField("Unranked Draft", `${ud.CurrentMMR} ${ud.LeagueId ? "_(" + this.leagueMap[ud.LeagueID] + ")_" : "" }`);
+                    if (tl && tl.CurrentMMR) embed.addField("Team League", `${tl.CurrentMMR} ${tl.LeagueId ? "_(" + this.leagueMap[tl.LeagueID] + ")_" : "" }`);
+                    if (sl && sl.CurrentMMR) embed.addField("Storm League", `${sl.CurrentMMR} ${sl.LeagueId ? "_(" + this.leagueMap[sl.LeagueID] + ")_" : "" }`);
                     message.channel.send({ embed })
                         .catch(console.error);
                 }
