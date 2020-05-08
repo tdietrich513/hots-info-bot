@@ -82,7 +82,7 @@ class PlayerSearch extends Command {
                         .catch(console.error);
                 } else {
                     const embed = new RichEmbed().setColor(0x00AE86);
-                    embed.setTitle(`Current MMR for ${matches[1]}/${name}#${tagNum}:`);
+                    embed.setTitle(`Current MMR for ${rawRegion}/${name}#${tagNum}:`);
                     embed.setDescription(`Sourced from [Hotslogs.com](https://www.hotslogs.com/Player/Profile?PlayerId=${playerId})`);
                     if (qm && qm.CurrentMMR) embed.addField("Quick Match", `${qm.CurrentMMR} ${qm.LeagueId ? "_(" + this.leagueMap[qm.LeagueID] + ")_" : "" }`);
                     if (hl && hl.CurrentMMR) embed.addField("Hero League", `${hl.CurrentMMR} ${hl.LeagueId ? "_(" + this.leagueMap[hl.LeagueID] + ")_" : "" }`);
