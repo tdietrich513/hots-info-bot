@@ -5,10 +5,7 @@ import {
   IHeroData,
   ITalentData,
   ISkillsAndTalentsResult,
-  IWinRate,
-  IHotsApiHero,
-  IHotsApiAbility,
-  IHotsApiTalent
+  IWinRate
 } from "./interfaces";
 import {
   getWinRates
@@ -16,21 +13,10 @@ import {
 
 import fetch from "node-fetch";
 import {
-  IPatchNotesHero,
-  IPatchNotesAbility
+  IPatchNotesHero
 } from "./interfaces/IPatchNotesHero";
 
-import { convert } from "tabletojson";
-import * as _ from "lodash";
-
-interface IRawRow {
-    Type: string;
-    Name: string;
-    "Latest Commit Message": string;
-    "Commit Time": string;
-}
-
-export default class HeroData {
+export class HeroData {
   static skills: ISkillData[] = [];
   static talents: ITalentData[] = [];
   static heroes: IHeroData[] = [];
@@ -169,11 +155,9 @@ export default class HeroData {
       body += data;
     });
     program.on("exit", () => {
-      const rawTable = convert(body)[0];
-      const table: string[] = _.map(rawTable, (row: IRawRow): string => {
-        return row.Name;
-      });
-      table.forEach(onHero);
+      const filePattern = /\/heroespatchnotes\/heroes-talents\/blob\/master\/hero\/(.+?\.json)/ig;
+      const matches = [...body.matchAll(filePattern)];
+      matches.forEach(m => onHero(m[1]));
     });
   }
 

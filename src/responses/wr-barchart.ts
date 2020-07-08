@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import { IWinRate } from "../interfaces";
-import HeroData from "../hero-data";
+import { HeroData } from "../hero-data";
 
 function barLength(val: number, max: number, scale: number): number {
   return _.floor((val / max) * scale);

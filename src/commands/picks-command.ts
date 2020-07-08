@@ -1,9 +1,9 @@
-import { RichEmbed, Message, GuildChannel } from "discord.js";
+import { Message, GuildChannel } from "discord.js";
 import { Command } from "discord-akairo";
 import * as _ from "lodash";
 
 import { IWinRate } from "../interfaces";
-import HeroData from "../hero-data";
+import { HeroData } from "../hero-data";
 import canUseEmbeds from "../can-use-embeds";
 import { renderPopularityBarChart } from "../responses";
 import { HeroRoles } from "../hero-roles";

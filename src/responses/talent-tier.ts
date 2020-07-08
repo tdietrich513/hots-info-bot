@@ -1,5 +1,5 @@
-import HeroData from "../hero-data";
-import { Message, RichEmbed } from "discord.js";
+import { HeroData } from "../hero-data";
+import { Message, MessageEmbed } from "discord.js";
 import { TalentFormatter } from "../talent-formatter";
 import * as _ from "lodash";
 
@@ -19,7 +19,7 @@ export function outputHeroTalentTier(search: string, message: Message, useEmbeds
       return message.reply(`Couldn't find a hero talent tier for '${search}'`);
   }
   if (useEmbeds) {
-      const embed = new RichEmbed()
+      const embed = new MessageEmbed()
           .setColor(0x00AE86)
           .setTitle(`${tier[0].hero} Level ${tier[0].tier} Talents:`);
 

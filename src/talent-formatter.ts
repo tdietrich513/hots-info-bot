@@ -1,5 +1,5 @@
 import { ITalentData } from "./interfaces";
-import { RichEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class TalentFormatter {
     static shortText(talent: ITalentData, includeHero: boolean): string {
@@ -48,7 +48,7 @@ export class TalentFormatter {
         return output;
     }
 
-    static embed(embed: RichEmbed, talent: ITalentData, includeHero: boolean): RichEmbed {
+    static embed(embed: MessageEmbed, talent: ITalentData, includeHero: boolean): MessageEmbed {
         const talentDescription = `_${talent.description}_\n\n`;
 
         let talentTitle = `${talent.name}`;
@@ -59,7 +59,7 @@ export class TalentFormatter {
         return embed;
     }
 
-    static embedDupe(embed: RichEmbed, talents: ITalentData[]): RichEmbed {
+    static embedDupe(embed: MessageEmbed, talents: ITalentData[]): MessageEmbed {
         let talentDescription = `_${talents[0].description}_\n`;
         talents.forEach(t => {
             talentDescription += `${t.hero} (${t.tier})\n`;

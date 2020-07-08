@@ -1,4 +1,4 @@
-import HeroData from "./hero-data";
+import { HeroData } from "./hero-data";
 import * as _ from "lodash";
 
 

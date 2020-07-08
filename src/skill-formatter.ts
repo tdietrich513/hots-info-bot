@@ -1,5 +1,5 @@
 import { ISkillData } from "./interfaces";
-import { RichEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class SkillFormatter {
     static shortText(skill: ISkillData, includeHero: boolean): string {
@@ -23,7 +23,7 @@ export class SkillFormatter {
         return output;
     }
 
-    static embed(embed: RichEmbed, skill: ISkillData, includeHero: boolean): RichEmbed {
+    static embed(embed: MessageEmbed, skill: ISkillData, includeHero: boolean): MessageEmbed {
         let skillDescription = `**Hotkey**: ${skill.hotkey}\t\t**Cooldown**: ${skill.cooldown || "None"}\t\t**Cost**: ${skill.manaCost || "None"}\n\n`;
         skillDescription += `_${skill.description}_\n\n`;
 

@@ -1,7 +1,7 @@
-import { AkairoClient, AkairoOptions } from "discord-akairo";
+import { AkairoClient, AkairoOptions, CommandHandler, ListenerHandler, InhibitorHandler, Command } from "discord-akairo";
 import * as fs from "fs";
 import { Client, ClientOptions } from "discord.js";
-import HeroData from "./hero-data";
+import { HeroData } from "./hero-data";
 import * as schedule from "node-schedule";
 
 if (!process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN === "") {
@@ -9,15 +9,35 @@ if (!process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN === "") {
     process.exit(1);
 }
 
-const akairoOptions: AkairoOptions = {
-    prefix: "##",
-    allowMention: true,
-    commandDirectory: __dirname + "/commands/",
-    inhibitorDirectory: __dirname + "/inhibitors/",
-    listenerDirectory: __dirname + "/listeners/"
-};
-const clientOptions: ClientOptions = {};
-const client = new AkairoClient(akairoOptions, clientOptions);
+
+class HIBClient extends AkairoClient {
+    commandHandler: CommandHandler;
+    inhibitorHandler: InhibitorHandler;
+    listenerHandler: ListenerHandler;
+
+    constructor() {
+        super({}, {});
+
+        this.commandHandler = new CommandHandler(this, {
+            directory: __dirname + "/commands/",
+            prefix: "##"
+        });
+
+        this.listenerHandler = new ListenerHandler(this, {
+            directory:  __dirname + "/listeners/"
+        });
+
+        this.inhibitorHandler = new InhibitorHandler(this, {
+            directory:  __dirname + "/inhibitors/"
+        });
+
+        this.commandHandler.loadAll();
+        this.listenerHandler.loadAll();
+        this.inhibitorHandler.loadAll();
+    }
+}
+
+const client = new HIBClient();
 const DEFAULT_STATUS = "try ##help for help";
 
 console.log("Pulling Hero Data");
@@ -55,6 +75,6 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
 
 function setStatus(status: string) {
     if ( client instanceof Client ) {
-        client.user.setPresence({ game: { name: status }});
+        client.user.setPresence({ activity: { name: status }});
     }
 }

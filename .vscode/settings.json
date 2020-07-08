@@ -9,6 +9,7 @@
     "tslint.autoFixOnSave": true,
     "tslint.exclude": "**/node_modules/**/*",
     "cSpell.words": [
+        "Akairo",
         "definitelytyped"
     ],
     "editor.tabSize": 2

@@ -1,9 +1,9 @@
-import { RichEmbed, Message, GuildChannel } from "discord.js";
+import { Message, GuildChannel } from "discord.js";
 import { Command } from "discord-akairo";
 
 import { outputSkillsOrTalents } from "../responses";
 import canUseEmbeds from "../can-use-embeds";
-import HeroData from "../hero-data";
+import { HeroData } from "../hero-data";
 
 import * as _ from "lodash";
 

@@ -1,4 +1,4 @@
-import { RichEmbed, Message, GuildChannel } from "discord.js";
+import { MessageEmbed, Message, GuildChannel } from "discord.js";
 import { Command } from "discord-akairo";
 import * as _ from "lodash";
 import * as https from "https";
@@ -81,7 +81,7 @@ class PlayerSearch extends Command {
                     message.channel.send(response)
                         .catch(console.error);
                 } else {
-                    const embed = new RichEmbed().setColor(0x00AE86);
+                    const embed = new MessageEmbed().setColor(0x00AE86);
                     embed.setTitle(`Current MMR for ${rawRegion}/${name}#${tagNum}:`);
                     embed.setDescription(`Sourced from [Hotslogs.com](https://www.hotslogs.com/Player/Profile?PlayerId=${playerId})`);
                     if (qm && qm.CurrentMMR) embed.addField("Quick Match", `${qm.CurrentMMR} ${qm.LeagueId ? "_(" + this.leagueMap[qm.LeagueID] + ")_" : "" }`);

@@ -1,5 +1,5 @@
-import HeroData from "../hero-data";
-import { Message, RichEmbed, GuildChannel } from "discord.js";
+import { HeroData } from "../hero-data";
+import { Message, MessageEmbed, GuildChannel } from "discord.js";
 import { SkillFormatter } from "../skill-formatter";
 import { TalentFormatter } from "../talent-formatter";
 import { ITalentData, ISkillsAndTalentsResult } from "../interfaces";
@@ -70,7 +70,7 @@ export function outputSkillsOrTalents(talentsAndSkills: ISkillsAndTalentsResult,
     }
 
     if (useEmbeds) {
-        const embed = new RichEmbed().setColor(0x00AE86);
+        const embed = new MessageEmbed().setColor(0x00AE86);
 
         talentsAndSkills.skills.forEach(skill => {
             SkillFormatter.embed(embed, skill, true);

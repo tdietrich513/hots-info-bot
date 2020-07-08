@@ -4,7 +4,7 @@ import * as _ from "lodash";
 
 import { outputSkillsOrTalents } from "../responses";
 import canUseEmbeds from "../can-use-embeds";
-import HeroData from "../hero-data";
+import { HeroData } from "../hero-data";
 
 class SkillHotkeyCommand extends Command {
   constructor() {

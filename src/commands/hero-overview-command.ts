@@ -1,4 +1,4 @@
-import { RichEmbed, Message, GuildChannel } from "discord.js";
+import { Message, GuildChannel } from "discord.js";
 import { Command } from "discord-akairo";
 import * as _ from "lodash";
 
@@ -7,7 +7,7 @@ import { TalentFormatter } from "../talent-formatter";
 import { ISkillData, ITalentData, IHeroData, ISkillsAndTalentsResult } from "../interfaces";
 import { outputSkillsOrTalents, outputHeroOverview, outputHeroTalentTier } from "../responses";
 import canUseEmbeds from "../can-use-embeds";
-import HeroData from "../hero-data";
+import { HeroData } from "../hero-data";
 
 class HeroOverviewCommand extends Command {
   constructor() {

@@ -1,5 +1,5 @@
-import HeroData from "../hero-data";
-import { Message, RichEmbed } from "discord.js";
+import { HeroData } from "../hero-data";
+import { Message, MessageEmbed } from "discord.js";
 import { SkillFormatter } from "../skill-formatter";
 import * as _ from "lodash";
 
@@ -8,7 +8,7 @@ export function outputHeroOverview(search: string, message: Message, useEmbeds: 
   const hero = HeroData.heroes.find(h => h.nameLower == searchHero);
   const winRates = HeroData.winrates.find(h => HeroData.makeSearchableName(h.hero) == searchHero);
   if (useEmbeds) {
-      const embed = new RichEmbed().setColor(0x00AE86);
+      const embed = new MessageEmbed().setColor(0x00AE86);
       embed.setTitle(`${hero.name} Skills Overview:`);
       embed.setDescription(`View popular builds at [HotsLogs.com](https://www.hotslogs.com/Sitewide/HeroDetails?Hero=${hero.name.replace(/\s/g, "%20")})`);
       if (winRates) {
