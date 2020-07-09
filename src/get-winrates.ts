@@ -1,4 +1,4 @@
-import { convert } from "tabletojson";
+import { Tabletojson } from "tabletojson";
 import { IWinRate } from "./interfaces";
 import * as _ from "lodash";
 import { exec, ChildProcess } from "child_process";
@@ -15,7 +15,7 @@ interface IRawRow {
 export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
   got("https://www.hotslogs.com/Default").then(response => {
     const body = response.body;
-    const rawTable = convert(body)[2];
+    const rawTable = Tabletojson.convert(body)[2];
     const table: IWinRate[] = _.map(rawTable, (row: IRawRow): IWinRate => {
       if (row.Hero == "Lúcio") row.Hero = "Lucio";
       const output: IWinRate = {

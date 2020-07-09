@@ -10,6 +10,7 @@
     "tslint.exclude": "**/node_modules/**/*",
     "cSpell.words": [
         "Akairo",
+        "Tabletojson",
         "definitelytyped"
     ],
     "editor.tabSize": 2
