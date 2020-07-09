@@ -53,5 +53,5 @@ Please ensure the bot has "Embed Images" permissions to get the best looking res
 Game information sourced from [this repo](https://github.com/heroespatchnotes/heroes-talents) and will only be as accurate as it is.
 
 ### Set up for development
-After installing all npm packages, create a file named `.env` and use it to set a `DISCORD_BOT_TOKEN` variable containing a valid discord App Bot User token. If you do not have phantom JS available on your PATH, you'll also want to set a `PHANTOMJS_BIN` variable with the location of a phantomJS executable that will run on your pc. The phantomjs-prebuilt package is set as a dev dependency, so you should be able to use  `.\node_modules\phantomjs-prebuilt\lib\phantom\bin\phantomjs.exe` for windows computers and `./node_modules/phantomjs-prebuilt/bin/phantomjs` on MacOS and Linux computers.
+After installing all npm packages, create a file named `.env` and use it to set a `DISCORD_BOT_TOKEN` variable containing a valid discord App Bot User token.
 

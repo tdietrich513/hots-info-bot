@@ -2,6 +2,7 @@ import { convert } from "tabletojson";
 import { IWinRate } from "./interfaces";
 import * as _ from "lodash";
 import { exec, ChildProcess } from "child_process";
+import got from "got";
 
 interface IRawRow {
   Hero: string;
@@ -12,13 +13,8 @@ interface IRawRow {
 }
 
 export function getWinRates(callBack: (winRates: IWinRate[]) => void) {
-  const program: ChildProcess = exec(`${process.env.PHANTOMJS_BIN || "phantomjs"} ./scrape-page.js`);
-  let body = "";
-  program.stderr.pipe(process.stderr);
-  program.stdout.on("data", data => {
-    body += data;
-  });
-  program.on("exit", () => {
+  got("https://www.hotslogs.com/Default").then(response => {
+    const body = response.body;
     const rawTable = convert(body)[2];
     const table: IWinRate[] = _.map(rawTable, (row: IRawRow): IWinRate => {
       if (row.Hero == "Lúcio") row.Hero = "Lucio";

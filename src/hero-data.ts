@@ -16,6 +16,8 @@ import {
   IPatchNotesHero
 } from "./interfaces/IPatchNotesHero";
 
+import got from "got";
+
 export class HeroData {
   static skills: ISkillData[] = [];
   static talents: ITalentData[] = [];
@@ -122,41 +124,12 @@ export class HeroData {
     return matchingHero.talents.get(tier) || [];
   }
 
-  private static readFiles(dirname: string, onFileContent: (f: string, c: string) => void, onError: (ex: any) => void): Promise < boolean > {
-    return new Promise < boolean > ((resolve, reject) => {
-      fs.readdir(dirname, (err, filenames) => {
-        if (err) {
-          onError(err);
-          reject(err);
-        }
-
-        filenames.forEach(filename => {
-          fs.readFile(dirname + filename, "utf-8", (err, content) => {
-            if (err) {
-              onError(err);
-              reject(err);
-            }
-            onFileContent(filename, content);
-          });
-        });
-
-        resolve(true);
-      });
-    });
-  }
-
-
-
   private static getSkillData(onHero: (hd: string) => void) {
-    const program: ChildProcess = exec(`${process.env.PHANTOMJS_BIN || "phantomjs"} ./scrape-hero-list.js`);
-    let body = "";
-    program.stderr.pipe(process.stderr);
-    program.stdout.on("data", data => {
-      body += data;
-    });
-    program.on("exit", () => {
-      const filePattern = /\/heroespatchnotes\/heroes-talents\/blob\/master\/hero\/(.+?\.json)/ig;
-      const matches = [...body.matchAll(filePattern)];
+    const filePattern = /\/heroespatchnotes\/heroes-talents\/blob\/master\/hero\/(.+?\.json)/ig;
+
+    got("https://github.com/heroespatchnotes/heroes-talents/tree/master/hero").then(response => {
+      const matches = [...response.body.matchAll(filePattern)];
+      console.log(`Got hero list, ${matches.length} heroes found`);
       matches.forEach(m => onHero(m[1]));
     });
   }
