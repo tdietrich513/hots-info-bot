@@ -56,15 +56,15 @@ winRateUpdateSchedule.minute = 0;
 const winRateJob = schedule.scheduleJob("GetWinRates", winRateUpdateSchedule, () => {
     console.log("Refreshing Win Rate Data");
     setStatus("Updating win rates");
+    setTimeout(_ => setStatus(DEFAULT_STATUS), 20000);
     HeroData.refreshWinRate();
-    setStatus(DEFAULT_STATUS);
 });
 
 const heroJob = schedule.scheduleJob("GetHeroData", heroUpdateSchedule, () => {
     console.log("Refreshing Hero Data");
     setStatus("Updating heroes data");
+    setTimeout(_ => setStatus(DEFAULT_STATUS), 20000);
     HeroData.loadData();
-    setStatus(DEFAULT_STATUS);
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
@@ -72,9 +72,12 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
     setStatus(DEFAULT_STATUS);
 });
 
-
 function setStatus(status: string) {
     if ( client instanceof Client ) {
-        client.user.setPresence({ activity: { name: status }});
+        client.user.setPresence({
+             activity: {
+                 name: status
+             }
+        });
     }
 }
