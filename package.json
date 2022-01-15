@@ -35,7 +35,7 @@
     "@types/node-fetch": "1.6.9",
     "@types/node-schedule": "1.2.2",
     "@types/phantom": "3.2.4",
-    "shelljs": "0.8.1",
+    "shelljs": "0.8.5",
     "ts-node": "6.0.2",
     "tslint": "6.1.2",
     "typescript": "^3.9.6"
